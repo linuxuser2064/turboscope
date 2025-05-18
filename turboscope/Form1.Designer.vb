@@ -136,7 +136,7 @@ Partial Class Form1
         '
         'Button7
         '
-        Me.Button7.Location = New System.Drawing.Point(7, 18)
+        Me.Button7.Location = New System.Drawing.Point(90, 47)
         Me.Button7.Name = "Button7"
         Me.Button7.Size = New System.Drawing.Size(75, 23)
         Me.Button7.TabIndex = 3
@@ -145,7 +145,7 @@ Partial Class Form1
         '
         'Button6
         '
-        Me.Button6.Location = New System.Drawing.Point(87, 48)
+        Me.Button6.Location = New System.Drawing.Point(9, 18)
         Me.Button6.Name = "Button6"
         Me.Button6.Size = New System.Drawing.Size(75, 23)
         Me.Button6.TabIndex = 2
@@ -154,7 +154,7 @@ Partial Class Form1
         '
         'Button5
         '
-        Me.Button5.Location = New System.Drawing.Point(7, 48)
+        Me.Button5.Location = New System.Drawing.Point(90, 18)
         Me.Button5.Name = "Button5"
         Me.Button5.Size = New System.Drawing.Size(75, 23)
         Me.Button5.TabIndex = 1
@@ -163,7 +163,7 @@ Partial Class Form1
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(87, 18)
+        Me.Button2.Location = New System.Drawing.Point(9, 47)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 0
@@ -197,7 +197,7 @@ Partial Class Form1
         'Label22
         '
         Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(74, 151)
+        Me.Label22.Location = New System.Drawing.Point(88, 151)
         Me.Label22.Name = "Label22"
         Me.Label22.Size = New System.Drawing.Size(94, 13)
         Me.Label22.TabIndex = 25
@@ -206,7 +206,7 @@ Partial Class Form1
         'PictureBox2
         '
         Me.PictureBox2.BackColor = System.Drawing.Color.Black
-        Me.PictureBox2.Location = New System.Drawing.Point(100, 167)
+        Me.PictureBox2.Location = New System.Drawing.Point(114, 167)
         Me.PictureBox2.Name = "PictureBox2"
         Me.PictureBox2.Size = New System.Drawing.Size(32, 32)
         Me.PictureBox2.TabIndex = 24
@@ -215,7 +215,7 @@ Partial Class Form1
         'Label21
         '
         Me.Label21.AutoSize = True
-        Me.Label21.Location = New System.Drawing.Point(6, 151)
+        Me.Label21.Location = New System.Drawing.Point(19, 151)
         Me.Label21.Name = "Label21"
         Me.Label21.Size = New System.Drawing.Size(56, 13)
         Me.Label21.TabIndex = 23
@@ -223,7 +223,7 @@ Partial Class Form1
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(14, 167)
+        Me.PictureBox1.Location = New System.Drawing.Point(27, 167)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(32, 32)
         Me.PictureBox1.TabIndex = 22

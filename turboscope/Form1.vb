@@ -350,7 +350,6 @@ Public Class Form1
                                              End Sub
     End Sub
 End Class
-' everything under here is almost purely to make the propertygrid work nice
 Public Class OscilloscopeChannel
     <Description("Selects the X coordinate of the visible area.")>
     Public Property X As Int32 = 0
