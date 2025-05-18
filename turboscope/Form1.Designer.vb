@@ -782,7 +782,6 @@ Partial Class Form1
         '
         Me.ComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.ComboBox1.FormattingEnabled = True
-        Me.ComboBox1.Items.AddRange(New Object() {"Channel 1", "Channel 2", "Channel 3"})
         Me.ComboBox1.Location = New System.Drawing.Point(0, 0)
         Me.ComboBox1.Name = "ComboBox1"
         Me.ComboBox1.Size = New System.Drawing.Size(205, 21)

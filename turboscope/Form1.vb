@@ -41,9 +41,9 @@ Public Class Form1
         Timer1.Start()
         VideoWorker.RunWorkerAsync()
     End Sub
-    Dim teringwatch As New Stopwatch
+    Dim timewatch As New Stopwatch
     Private Sub VideoWorker_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles VideoWorker.DoWork
-        teringwatch.Start()
+        timewatch.Start()
         FFmpegLoader.FFmpegPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\x86_64")
 
         For i = 0 To Channels.Count - 1
@@ -107,9 +107,8 @@ Public Class Form1
         File.Copy(Path.Combine(Application.StartupPath, "out.mp4"), VideoOutputPath, True)
         File.Delete(Path.Combine(Application.StartupPath, "out.mp4"))
         File.Delete($"{VideoOutputPath}_raw.mp4")
-        teringwatch.Stop()
-        MsgBox("Done!")
-        Me.Text = "turboscope"
+        timewatch.Stop()
+        progress = -2
     End Sub
     Sub DrawChannel(ByRef g As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen)
         Dim width = channel.Width
@@ -282,7 +281,13 @@ Public Class Form1
             Exit Sub
         End If
         Dim div = CustomRunningTime / 100
-        Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {teringwatch.Elapsed.ToString("hh\:mm\:ss")}"
+        If progress = -2 Then
+            Timer1.Stop()
+            MsgBox($"Done!
+Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}")
+            Me.Text = "turboscope"
+        End If
+        Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}"
     End Sub
 
     Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
