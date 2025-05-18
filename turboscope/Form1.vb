@@ -253,6 +253,8 @@ Public Class Form1
         PictureBox1.BackColor = ColorTranslator.FromHtml("#7AFF3E")
         LineClr = ColorTranslator.FromHtml("#7AFF3E")
         ForegroundColorDlg.Color = ColorTranslator.FromHtml("#7AFF3E")
+        Channels.Clear()
+
         For i = 0 To 2
             Channels.Add(New OscilloscopeChannel)
         Next
@@ -337,6 +339,7 @@ Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {ti
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bufBMP)
             For i = 0 To Channels.Count - 1
                 If Channels(i).Enabled Then
+                    MsgBox(Channels(i).AudioFile)
                     Channels(i).AudioData = LoadWavSamples(Channels(i).AudioFile)
                     If Channels(i).Multiplier <> 1 Then
                         For o = 0 To Channels(i).AudioData.samples.Length - 1
