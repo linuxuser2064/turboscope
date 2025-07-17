@@ -30,6 +30,7 @@ Partial Class Form1
         Me.Button5 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.CheckBox5 = New System.Windows.Forms.CheckBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         Me.Label21 = New System.Windows.Forms.Label()
@@ -97,6 +98,7 @@ Partial Class Form1
         Me.BackgroundColorDlg = New System.Windows.Forms.ColorDialog()
         Me.ForegroundColorDlg = New System.Windows.Forms.ColorDialog()
         Me.Button8 = New System.Windows.Forms.Button()
+        Me.RealVersionOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -172,6 +174,7 @@ Partial Class Form1
         '
         'GroupBox4
         '
+        Me.GroupBox4.Controls.Add(Me.CheckBox5)
         Me.GroupBox4.Controls.Add(Me.Label22)
         Me.GroupBox4.Controls.Add(Me.PictureBox2)
         Me.GroupBox4.Controls.Add(Me.Label21)
@@ -194,6 +197,16 @@ Partial Class Form1
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Global"
         '
+        'CheckBox5
+        '
+        Me.CheckBox5.AutoSize = True
+        Me.CheckBox5.Location = New System.Drawing.Point(90, 126)
+        Me.CheckBox5.Name = "CheckBox5"
+        Me.CheckBox5.Size = New System.Drawing.Size(85, 17)
+        Me.CheckBox5.TabIndex = 26
+        Me.CheckBox5.Text = "Real version"
+        Me.CheckBox5.UseVisualStyleBackColor = True
+        '
         'Label22
         '
         Me.Label22.AutoSize = True
@@ -209,6 +222,7 @@ Partial Class Form1
         Me.PictureBox2.Location = New System.Drawing.Point(114, 167)
         Me.PictureBox2.Name = "PictureBox2"
         Me.PictureBox2.Size = New System.Drawing.Size(32, 32)
+        Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox2.TabIndex = 24
         Me.PictureBox2.TabStop = False
         '
@@ -247,7 +261,7 @@ Partial Class Form1
         Me.NumericUpDown3.Name = "NumericUpDown3"
         Me.NumericUpDown3.Size = New System.Drawing.Size(116, 20)
         Me.NumericUpDown3.TabIndex = 20
-        Me.NumericUpDown3.Value = New Decimal(New Integer() {5, 0, 0, 0})
+        Me.NumericUpDown3.Value = New Decimal(New Integer() {4, 0, 0, 0})
         '
         'Label20
         '
@@ -804,6 +818,10 @@ Partial Class Form1
         Me.Button8.Text = "Preview"
         Me.Button8.UseVisualStyleBackColor = True
         '
+        'RealVersionOpenFileDialog
+        '
+        Me.RealVersionOpenFileDialog.Filter = "Images|*.png;*.jpg';*.bmp;*.gif;'*.jpeg|All files|*"
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -930,4 +948,6 @@ Partial Class Form1
     Friend WithEvents BackgroundColorDlg As ColorDialog
     Friend WithEvents ForegroundColorDlg As ColorDialog
     Friend WithEvents Button8 As Button
+    Friend WithEvents CheckBox5 As CheckBox
+    Friend WithEvents RealVersionOpenFileDialog As OpenFileDialog
 End Class

@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Design
 Imports System.IO
+Imports System.Reflection
 Imports System.Windows.Forms.Design
 Imports FFMediaToolkit
 Imports FFMediaToolkit.Encoding
@@ -13,6 +14,8 @@ Public Class Form1
     Dim LineWidth As Int32 = 5
     Dim LineClr As Color
     Dim BackClr As Color = Color.Black
+    Dim realVersion As Boolean = False
+    Dim walls As Bitmap
 
     Dim CustomRunningTimeEnabled As Boolean = False
     Dim CustomRunningTime As Long = 0
@@ -42,7 +45,7 @@ Public Class Form1
         VideoWorker.RunWorkerAsync()
     End Sub
     Dim timewatch As New Stopwatch
-    Private Sub VideoWorker_DoWork(sender As Object, e As System.ComponentModel.DoWorkEventArgs) Handles VideoWorker.DoWork
+    Private Sub VideoWorker_DoWork(sender As Object, e As DoWorkEventArgs) Handles VideoWorker.DoWork
         timewatch.Start()
         FFmpegLoader.FFmpegPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\x86_64")
 
@@ -58,13 +61,14 @@ Public Class Form1
         Next
 
         Dim length = Channels(0).AudioData.samples.Length
+        SampleRate = Channels(0).AudioData.sampleRate
         maxprog = length
         Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bmp)
             Dim audioCounter As Long = 0
             Dim clr As New Pen(LineClr)
             Dim samplesPerFrame As Integer = SampleRate \ 50
-            Dim drawSampleCount As Integer = SampleRate \ 16
+            Dim drawSampleCount As Integer = SampleRate \ 15
 
             Dim vid = MediaBuilder.CreateContainer($"{VideoOutputPath}_raw.mp4", ContainerFormat.MP4).
             WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, 50, VideoCodec.Default)).
@@ -73,15 +77,18 @@ Public Class Form1
             While audioCounter < length
                 If CustomRunningTimeEnabled AndAlso audioCounter >= CustomRunningTime Then Exit While
                 If audioCounter + samplesPerFrame >= length Then Exit While
-
-                g.Clear(BackClr)
+                If realVersion Then
+                    g.DrawImageUnscaled(walls, 0, 0)
+                Else
+                    g.Clear(BackClr)
+                End If
 
                 For Each ch In Channels
                     If ch.Enabled Then
                         Dim smp = ch.AudioData.samples
                         If audioCounter + drawSampleCount < smp.Length Then
                             Dim smpData = smp.AsSpan().Slice(CInt(audioCounter), drawSampleCount).ToArray()
-                            DrawChannel(g, ch, smpData, clr)
+                            DrawChannel(g, ch, smpData, clr, bmp)
                         End If
                     End If
                 Next
@@ -95,7 +102,7 @@ Public Class Form1
             vid.Dispose()
         End Using
 
-        Dim ffmpegArgs = $"-i ""{VideoOutputPath}_raw.mp4"" -i ""{MasterAudio}"" -shortest -c copy -map 0:v:0 -map 1:a:0 ""{Application.StartupPath}\out.mp4"""
+        Dim ffmpegArgs = $"-i ""{VideoOutputPath}_raw.mp4"" -i ""{MasterAudio}"" -shortest -c:v copy -c:a aac -b:a 320k -map 0:v:0 -map 1:a:0 ""{Application.StartupPath}\out.mp4"""
         Dim psi As New ProcessStartInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\x86_64\ffmpeg.exe"), ffmpegArgs) With {
         .UseShellExecute = False,
         .CreateNoWindow = True
@@ -110,23 +117,81 @@ Public Class Form1
         timewatch.Stop()
         progress = -2
     End Sub
-    Sub DrawChannel(ByRef g As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen)
+    Sub DrawChannel(ByRef g As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen, bmp As Bitmap)
         Dim width = channel.Width
         Dim height = channel.Height
         Dim xOffset = channel.X
         Dim yOffset = channel.Y
+        ' --- ZERO-CROSSING TRIGGER ---
+        'Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
+        'Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
+        'Dim triggerLevel As Single = maxTrig - 0.01F
+        'Dim hysteresis As Single = 0.01F
+        '' try 1
+        'Dim index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        'If index = 0 Then
+        '    triggerLevel = minTrig - 0.01F
+        '    ' try 2
+        '    index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        'End If
+        'If index = 0 Then
+        '    triggerLevel = (maxTrig + minTrig) / 2
+        '    ' try 3
+        '    index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        'End If
+        'index -= width \ 2
 
-        Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
-        Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
-        Dim triggerLevel As Single = (maxTrig + minTrig) / 2
-        Dim hysteresis As Single = 0.01F
 
-        Dim index = Enumerable.Range(width \ 2, songData.Length - width - 1).
-        FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        ' --- PEAK SPEED TRIGGER ---
+        Dim peakValue As Single = Single.MinValue
+        Dim shortestDistance As Integer = Integer.MaxValue
+        Dim result As Integer = -1
 
-        index -= width \ 2
+        Dim triggerLo As Single = -0.01
+        Dim triggerHi As Single = 0.01
+
+        Dim startIndex As Integer = width \ 2
+        Dim endIndex As Integer = songData.Length - width - 1
+        Dim i As Integer = startIndex
+
+        While i < endIndex
+            While i < endIndex AndAlso songData(i) > triggerLo
+                i += 1
+            End While
+            While i < endIndex AndAlso songData(i) <= triggerHi
+                i += 1
+            End While
+
+            Dim lastCrossing As Integer = i
+
+            While i < endIndex
+                Dim sample As Single = songData(i)
+                If sample <= 0 Then Exit While
+
+                If sample > peakValue Then
+                    peakValue = sample
+                    result = lastCrossing
+                    shortestDistance = i - lastCrossing
+                ElseIf sample = peakValue AndAlso (i - lastCrossing) < shortestDistance Then
+                    result = lastCrossing
+                    shortestDistance = i - lastCrossing
+                End If
+
+                i += 1
+            End While
+        End While
+
+        ' Fallback if nothing found
+        If result = -1 Then
+            result = songData.Length \ 2
+        End If
+
+        ' Center waveform around trigger
+        Dim index = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
+
+
         index = Math.Max(0, Math.Min(index, songData.Length - width - 1))
-
+        'Using fp As New FastPix(bmp)
         Dim prevX = songData(index)
         For i = index To index + width - 1
             Dim x = songData(i)
@@ -134,6 +199,7 @@ Public Class Form1
             Dim y0 = CInt((height / 2) - (prevX * (height / 2)) + yOffset) ' calculate y of previous song value
             If CRTScope Then
                 For i2 = -(LineWidth \ 2) To (LineWidth \ 2)
+                    'QuickDrawLine(lineColor, i - index + xOffset, y1 + i2, i - index + xOffset, y0 + 1 + i2, fp)
                     g.DrawLine(lineColor, i - index + xOffset, y1 + i2, i - index - 1 + xOffset, y0 + 1 + i2)
                 Next
             Else
@@ -145,6 +211,26 @@ Public Class Form1
             End If
             prevX = x
         Next
+        'End Using
+    End Sub
+
+    ' this is completely fucked
+    Public Sub QuickDrawLine(pen As Pen, x1 As Int32, y1 As Int32, x2 As Int32, y2 As Int32, ByRef fp As FastPix)
+        ' this will only draw vertical lines (x1 and x2 will be assumed to be the same)
+        Dim clr As Color = pen.Color
+        If y1 < y2 Then
+            For i = y1 To y2
+                fp.SetPixel(x1, i, clr)
+            Next
+        End If
+        If y2 < y1 Then
+            For i = y2 To y1
+                fp.SetPixel(x1, i, clr)
+            Next
+        End If
+        If y1 = y2 Then
+            fp.SetPixel(x1, y1, clr)
+        End If
     End Sub
     Private Sub SaveSets()
         MasterAudio = TextBox4.Text
@@ -157,8 +243,18 @@ Public Class Form1
         LineWidth = NumericUpDown3.Value
         LineClr = PictureBox1.BackColor
         BackClr = PictureBox2.BackColor
+        realVersion = CheckBox5.Checked
+        If realVersion Then
+            walls = ScaleImage(PictureBox2.BackgroundImage, 1280, 720)
+        End If
     End Sub
-
+    Function ScaleImage(orig As Bitmap, w As Int32, h As Int32) As Bitmap
+        Dim newbmp As New Bitmap(w, h)
+        Using g As Drawing.Graphics = Drawing.Graphics.FromImage(newbmp)
+            g.DrawImage(orig, 0, 0, w, h)
+        End Using
+        Return newbmp
+    End Function
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         MasterAudioOpenFileDialog1.ShowDialog()
     End Sub
@@ -274,6 +370,7 @@ Public Class Form1
         Channels(2).Height = NumericUpDown34.Value
         Channels(2).Enabled = CheckBox3.Checked
         ComboBox1.SelectedIndex = 0
+        PropertyGrid1.SelectedObject = Channels(0)
     End Sub
 
     Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
@@ -285,8 +382,7 @@ Public Class Form1
         Dim div = CustomRunningTime / 100
         If progress = -2 Then
             Timer1.Stop()
-            MsgBox($"Done!
-Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}")
+            MsgBox($"Done!")
             Me.Text = "turboscope"
         End If
         Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}"
@@ -328,8 +424,14 @@ Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {ti
     End Sub
 
     Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
-        If BackgroundColorDlg.ShowDialog() = DialogResult.OK Then
-            PictureBox2.BackColor = BackgroundColorDlg.Color
+        If realVersion Then
+            If BackgroundColorDlg.ShowDialog() = DialogResult.OK Then
+                PictureBox2.BackColor = BackgroundColorDlg.Color
+            End If
+        Else
+            If RealVersionOpenFileDialog.ShowDialog = DialogResult.OK Then
+                PictureBox2.BackgroundImage = Image.FromFile(RealVersionOpenFileDialog.FileName)
+            End If
         End If
     End Sub
 
@@ -337,6 +439,11 @@ Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {ti
         SaveSets()
         Dim bufBMP As New Bitmap(1280, 720)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bufBMP)
+            If realVersion Then
+                g.DrawImage(walls, 0, 0, 1280, 720)
+            Else
+                g.Clear(BackClr)
+            End If
             For i = 0 To Channels.Count - 1
                 If Channels(i).Enabled Then
                     MsgBox(Channels(i).AudioFile)
@@ -346,7 +453,7 @@ Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {ti
                             Channels(i).AudioData.samples(o) *= Channels(i).Multiplier
                         Next
                     End If
-                    DrawChannel(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, New Pen(LineClr))
+                    DrawChannel(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, New Pen(LineClr), bufBMP)
                     Channels(i).AudioData = Nothing
                 End If
             Next
@@ -356,6 +463,15 @@ Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {ti
         AddHandler PreviewWindow.FormClosed, Sub()
                                                  bufBMP.Dispose()
                                              End Sub
+    End Sub
+
+    Private Sub CheckBox5_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox5.CheckedChanged
+        If CheckBox5.Checked Then
+            Label22.Text = "Background image:"
+        Else
+            Label22.Text = "Background color:"
+            PictureBox2.Image = Nothing
+        End If
     End Sub
 End Class
 Public Class OscilloscopeChannel
