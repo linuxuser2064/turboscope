@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class Form1
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
@@ -192,7 +192,7 @@ Partial Class Form1
         Me.GroupBox4.Controls.Add(Me.Label16)
         Me.GroupBox4.Location = New System.Drawing.Point(211, 84)
         Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(187, 205)
+        Me.GroupBox4.Size = New System.Drawing.Size(187, 243)
         Me.GroupBox4.TabIndex = 10
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Global"
@@ -200,17 +200,17 @@ Partial Class Form1
         'CheckBox5
         '
         Me.CheckBox5.AutoSize = True
-        Me.CheckBox5.Location = New System.Drawing.Point(90, 126)
+        Me.CheckBox5.Location = New System.Drawing.Point(95, 129)
         Me.CheckBox5.Name = "CheckBox5"
-        Me.CheckBox5.Size = New System.Drawing.Size(85, 17)
+        Me.CheckBox5.Size = New System.Drawing.Size(82, 17)
         Me.CheckBox5.TabIndex = 26
-        Me.CheckBox5.Text = "Real version"
+        Me.CheckBox5.Text = "Anti-aliasing"
         Me.CheckBox5.UseVisualStyleBackColor = True
         '
         'Label22
         '
         Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(88, 151)
+        Me.Label22.Location = New System.Drawing.Point(88, 182)
         Me.Label22.Name = "Label22"
         Me.Label22.Size = New System.Drawing.Size(94, 13)
         Me.Label22.TabIndex = 25
@@ -219,7 +219,7 @@ Partial Class Form1
         'PictureBox2
         '
         Me.PictureBox2.BackColor = System.Drawing.Color.Black
-        Me.PictureBox2.Location = New System.Drawing.Point(114, 167)
+        Me.PictureBox2.Location = New System.Drawing.Point(114, 198)
         Me.PictureBox2.Name = "PictureBox2"
         Me.PictureBox2.Size = New System.Drawing.Size(32, 32)
         Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
@@ -229,7 +229,7 @@ Partial Class Form1
         'Label21
         '
         Me.Label21.AutoSize = True
-        Me.Label21.Location = New System.Drawing.Point(19, 151)
+        Me.Label21.Location = New System.Drawing.Point(19, 182)
         Me.Label21.Name = "Label21"
         Me.Label21.Size = New System.Drawing.Size(56, 13)
         Me.Label21.TabIndex = 23
@@ -237,7 +237,7 @@ Partial Class Form1
         '
         'PictureBox1
         '
-        Me.PictureBox1.Location = New System.Drawing.Point(27, 167)
+        Me.PictureBox1.Location = New System.Drawing.Point(27, 198)
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(32, 32)
         Me.PictureBox1.TabIndex = 22
@@ -248,7 +248,7 @@ Partial Class Form1
         Me.CheckBox4.AutoSize = True
         Me.CheckBox4.Checked = True
         Me.CheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox4.Location = New System.Drawing.Point(4, 126)
+        Me.CheckBox4.Location = New System.Drawing.Point(9, 129)
         Me.CheckBox4.Name = "CheckBox4"
         Me.CheckBox4.Size = New System.Drawing.Size(80, 17)
         Me.CheckBox4.TabIndex = 21
@@ -736,7 +736,7 @@ Partial Class Form1
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(211, 320)
+        Me.Button1.Location = New System.Drawing.Point(211, 354)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 12
@@ -757,7 +757,7 @@ Partial Class Form1
         'CheckBox6
         '
         Me.CheckBox6.AutoSize = True
-        Me.CheckBox6.Location = New System.Drawing.Point(211, 297)
+        Me.CheckBox6.Location = New System.Drawing.Point(211, 331)
         Me.CheckBox6.Name = "CheckBox6"
         Me.CheckBox6.Size = New System.Drawing.Size(72, 17)
         Me.CheckBox6.TabIndex = 13
@@ -766,7 +766,7 @@ Partial Class Form1
         '
         'NumericUpDown1
         '
-        Me.NumericUpDown1.Location = New System.Drawing.Point(281, 295)
+        Me.NumericUpDown1.Location = New System.Drawing.Point(281, 329)
         Me.NumericUpDown1.Maximum = New Decimal(New Integer() {999999, 0, 0, 0})
         Me.NumericUpDown1.Name = "NumericUpDown1"
         Me.NumericUpDown1.Size = New System.Drawing.Size(62, 20)
@@ -776,7 +776,7 @@ Partial Class Form1
         'Label18
         '
         Me.Label18.AutoSize = True
-        Me.Label18.Location = New System.Drawing.Point(346, 297)
+        Me.Label18.Location = New System.Drawing.Point(346, 331)
         Me.Label18.Name = "Label18"
         Me.Label18.Size = New System.Drawing.Size(27, 13)
         Me.Label18.TabIndex = 15
@@ -789,7 +789,7 @@ Partial Class Form1
         '
         Me.PropertyGrid1.Location = New System.Drawing.Point(2, 22)
         Me.PropertyGrid1.Name = "PropertyGrid1"
-        Me.PropertyGrid1.Size = New System.Drawing.Size(203, 321)
+        Me.PropertyGrid1.Size = New System.Drawing.Size(203, 355)
         Me.PropertyGrid1.TabIndex = 16
         '
         'ComboBox1
@@ -811,7 +811,7 @@ Partial Class Form1
         '
         'Button8
         '
-        Me.Button8.Location = New System.Drawing.Point(292, 320)
+        Me.Button8.Location = New System.Drawing.Point(292, 354)
         Me.Button8.Name = "Button8"
         Me.Button8.Size = New System.Drawing.Size(75, 23)
         Me.Button8.TabIndex = 18
@@ -826,7 +826,7 @@ Partial Class Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(402, 345)
+        Me.ClientSize = New System.Drawing.Size(402, 377)
         Me.Controls.Add(Me.Button8)
         Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.PropertyGrid1)

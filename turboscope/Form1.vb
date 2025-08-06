@@ -17,6 +17,8 @@ Public Class Form1
     Dim realVersion As Boolean = False
     Dim walls As Bitmap
 
+    Dim DoAntiAliasing As Boolean = False
+
     Dim CustomRunningTimeEnabled As Boolean = False
     Dim CustomRunningTime As Long = 0
     Dim VideoOutputPath As String
@@ -25,6 +27,7 @@ Public Class Form1
     Dim VideoSize As New Size(1280, 720) ' stub
     Dim progress As Long = 0
     Dim maxprog As Long = 0
+    Dim UseOldTrigger As Boolean = False
     Public Function LoadWavSamples(filePath As String) As (samples As Single(), sampleRate As Integer)
         Dim reader As ISampleProvider = New AudioFileReader(filePath).ToMono
         Dim sampleRate = reader.WaveFormat.SampleRate
@@ -40,6 +43,8 @@ Public Class Form1
         Return (sampleList.ToArray(), sampleRate)
     End Function
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Button1.Enabled = False
+        Button8.Enabled = False
         SaveSets()
         Timer1.Start()
         VideoWorker.RunWorkerAsync()
@@ -65,6 +70,11 @@ Public Class Form1
         maxprog = length
         Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bmp)
+            If DoAntiAliasing Then
+                g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            Else
+                g.SmoothingMode = Drawing2D.SmoothingMode.None
+            End If
             Dim audioCounter As Long = 0
             Dim clr As New Pen(LineClr)
             Dim samplesPerFrame As Integer = SampleRate \ 50
@@ -117,42 +127,51 @@ Public Class Form1
         timewatch.Stop()
         progress = -2
     End Sub
+    Function Clamp(val, min, max) As Int32
+        Return Math.Max(min, Math.Min(val, max))
+    End Function
     Sub DrawChannel(ByRef g As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen, bmp As Bitmap)
         Dim width = channel.Width
         Dim height = channel.Height
-        Dim xOffset = channel.X
-        Dim yOffset = channel.Y
+        Dim chanX = channel.X
+        Dim chanY = channel.Y
+
         ' --- ZERO-CROSSING TRIGGER ---
-        'Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
-        'Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
-        'Dim triggerLevel As Single = maxTrig - 0.01F
-        'Dim hysteresis As Single = 0.01F
-        '' try 1
-        'Dim index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
-        'If index = 0 Then
-        '    triggerLevel = minTrig - 0.01F
-        '    ' try 2
-        '    index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
-        'End If
-        'If index = 0 Then
-        '    triggerLevel = (maxTrig + minTrig) / 2
-        '    ' try 3
-        '    index = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
-        'End If
-        'index -= width \ 2
 
 
         ' --- PEAK SPEED TRIGGER ---
+        'If UseOldTrigger Then
+        '    Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
+        '    Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
+        '    Dim triggerLevel As Single = (maxTrig + minTrig) / 2
+        '    Dim hysteresis As Single = 0.01F
+        '    ' try 1
+        '    startIndex = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        '    If startIndex = 0 Then
+        '        triggerLevel = minTrig + 0.01F
+        '        ' try 2
+        '        startIndex = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        '    End If
+        '    If startIndex = 0 Then
+        '        triggerLevel = maxTrig - 0.01F
+        '        ' try 3
+        '        startIndex = Enumerable.Range(width \ 2, songData.Length - width - 1).FirstOrDefault(Function(i) songData(i) < triggerLevel AndAlso songData(i + 1) >= triggerLevel + hysteresis)
+        '    End If
+        '    startIndex -= width \ 2
+        'Else
         Dim peakValue As Single = Single.MinValue
         Dim shortestDistance As Integer = Integer.MaxValue
         Dim result As Integer = -1
 
-        Dim triggerLo As Single = -0.01
-        Dim triggerHi As Single = 0.01
+        Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
+        Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
 
-        Dim startIndex As Integer = width \ 2
+        Dim triggerLo As Single = Clamp(0, minTrig, maxTrig) - 0.01
+        Dim triggerHi As Single = Clamp(0, minTrig, maxTrig) + 0.01
+
+        Dim startIndexs As Integer = width \ 2
         Dim endIndex As Integer = songData.Length - width - 1
-        Dim i As Integer = startIndex
+        Dim i As Integer = startIndexs
 
         While i < endIndex
             While i < endIndex AndAlso songData(i) > triggerLo
@@ -187,29 +206,36 @@ Public Class Form1
         End If
 
         ' Center waveform around trigger
-        Dim index = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
+        Dim startIndex = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
 
 
-        index = Math.Max(0, Math.Min(index, songData.Length - width - 1))
+        startIndex = Math.Max(0, Math.Min(startIndex, songData.Length - width - 1))
+        'End If
         'Using fp As New FastPix(bmp)
-        Dim prevX = songData(index)
-        For i = index To index + width - 1
-            Dim x = songData(i)
-            Dim y1 = CInt((height / 2) - (x * (height / 2)) + yOffset) ' calculate y of current value
-            Dim y0 = CInt((height / 2) - (prevX * (height / 2)) + yOffset) ' calculate y of previous song value
+        Dim prevVal = songData(startIndex)
+        For i = startIndex To startIndex + width - 1
+            Dim val = songData(i)
+            Dim currentY = (height / 2) - (val * (height / 2)) + chanY ' calculate y of current value
+            Dim prevY = (height / 2) - (prevVal * (height / 2)) + chanY ' calculate y of previous song value
+            Dim x = i - startIndex + chanX
             If CRTScope Then
                 For i2 = -(LineWidth \ 2) To (LineWidth \ 2)
-                    'QuickDrawLine(lineColor, i - index + xOffset, y1 + i2, i - index + xOffset, y0 + 1 + i2, fp)
-                    g.DrawLine(lineColor, i - index + xOffset, y1 + i2, i - index - 1 + xOffset, y0 + 1 + i2)
+                    If DoAntiAliasing Then
+                        '                                x1                     y1                          x2                          y2
+                        g.DrawLine(lineColor, New PointF(i - startIndex + chanX, currentY + i2), New PointF(i - startIndex + chanX - 1, prevY + 1 + i2))
+                    Else
+                        g.DrawLine(lineColor, i - startIndex + chanX, CInt(currentY) + i2, i - startIndex + chanX - 1, CInt(prevY) + 1 + i2)
+                    End If
                 Next
             Else
-                lineColor.Width = LineWidth
-                lineColor.StartCap = Drawing2D.LineCap.Round
-                lineColor.EndCap = Drawing2D.LineCap.Round
-                lineColor.LineJoin = Drawing2D.LineJoin.Round
-                g.DrawLine(lineColor, i - index + xOffset, y1, i - index - 1 + xOffset, y0 + 1)
+                Dim newClr As New Pen(lineColor.Color, LineWidth)
+                If DoAntiAliasing Then
+                    g.DrawLine(newClr, New PointF(i - startIndex + chanX, currentY), New PointF(i - startIndex + chanX - 1, prevY + 1))
+                Else
+                    g.DrawLine(newClr, i - startIndex + chanX, CInt(currentY), i - startIndex + chanX - 1, CInt(prevY) + 1)
+                End If
             End If
-            prevX = x
+            prevVal = val
         Next
         'End Using
     End Sub
@@ -243,10 +269,7 @@ Public Class Form1
         LineWidth = NumericUpDown3.Value
         LineClr = PictureBox1.BackColor
         BackClr = PictureBox2.BackColor
-        realVersion = CheckBox5.Checked
-        If realVersion Then
-            walls = ScaleImage(PictureBox2.BackgroundImage, 1280, 720)
-        End If
+        UseOldTrigger = CheckBox7.Checked
     End Sub
     Function ScaleImage(orig As Bitmap, w As Int32, h As Int32) As Bitmap
         Dim newbmp As New Bitmap(w, h)
@@ -384,6 +407,8 @@ Public Class Form1
             Timer1.Stop()
             MsgBox($"Done!")
             Me.Text = "turboscope"
+            Button1.Enabled = True
+            Button8.Enabled = True
         End If
         Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}"
     End Sub
@@ -466,12 +491,7 @@ Public Class Form1
     End Sub
 
     Private Sub CheckBox5_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox5.CheckedChanged
-        If CheckBox5.Checked Then
-            Label22.Text = "Background image:"
-        Else
-            Label22.Text = "Background color:"
-            PictureBox2.Image = Nothing
-        End If
+        DoAntiAliasing = CheckBox5.Checked
     End Sub
 End Class
 Public Class OscilloscopeChannel
