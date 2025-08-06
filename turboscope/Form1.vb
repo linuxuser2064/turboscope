@@ -27,7 +27,6 @@ Public Class Form1
     Dim VideoSize As New Size(1280, 720) ' stub
     Dim progress As Long = 0
     Dim maxprog As Long = 0
-    Dim UseOldTrigger As Boolean = False
     Public Function LoadWavSamples(filePath As String) As (samples As Single(), sampleRate As Integer)
         Dim reader As ISampleProvider = New AudioFileReader(filePath).ToMono
         Dim sampleRate = reader.WaveFormat.SampleRate
@@ -269,7 +268,6 @@ Public Class Form1
         LineWidth = NumericUpDown3.Value
         LineClr = PictureBox1.BackColor
         BackClr = PictureBox2.BackColor
-        UseOldTrigger = CheckBox7.Checked
     End Sub
     Function ScaleImage(orig As Bitmap, w As Int32, h As Int32) As Bitmap
         Dim newbmp As New Bitmap(w, h)
