@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 namespace BitmapToImageData
 {
-    public static class my_ass
+    public static class BMPtoBitmapData
     {
         public static void AddBitmapFrame(MediaOutput video, Bitmap bmp)
         {
@@ -20,12 +20,6 @@ namespace BitmapToImageData
             {
                 bmp.UnlockBits(data);
             }
-        }
-        public static void AddAudioFrame(MediaOutput audio, Single[] frame)
-        {
-            var myass = new FFMediaToolkit.Audio.AudioData();
-            myass.UpdateChannelData(frame, 0);
-            audio.Audio.AddFrame(myass);
         }
     }
 }

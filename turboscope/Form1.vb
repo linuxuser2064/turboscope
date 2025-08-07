@@ -66,7 +66,6 @@ Public Class Form1
 
         Dim length = Channels(0).AudioData.samples.Length
         SampleRate = Channels(0).AudioData.sampleRate
-        maxprog = length
         Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bmp)
             If DoAntiAliasing Then
@@ -102,7 +101,7 @@ Public Class Form1
                     End If
                 Next
 
-                BitmapToImageData.my_ass.AddBitmapFrame(vid, bmp)
+                BitmapToImageData.BMPtoBitmapData.AddBitmapFrame(vid, bmp)
 
                 audioCounter += samplesPerFrame
                 progress = audioCounter
