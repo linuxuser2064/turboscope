@@ -74,7 +74,6 @@ Public Class Form1
                 g.SmoothingMode = Drawing2D.SmoothingMode.None
             End If
             Dim audioCounter As Long = 0
-            Dim clr As New Pen(LineClr)
             Dim samplesPerFrame As Integer = SampleRate \ 50
             Dim drawSampleCount As Integer = SampleRate \ 15
 
@@ -93,6 +92,7 @@ Public Class Form1
 
                 For Each ch In Channels
                     If ch.Enabled Then
+                        Dim clr As New Pen(ch.LineColor)
                         Dim smp = ch.AudioData.samples
                         If audioCounter + drawSampleCount < smp.Length Then
                             Dim smpData = smp.AsSpan().Slice(CInt(audioCounter), drawSampleCount).ToArray()
@@ -123,6 +123,7 @@ Public Class Form1
         File.Delete(Path.Combine(Application.StartupPath, "out.mp4"))
         File.Delete($"{VideoOutputPath}_raw.mp4")
         timewatch.Stop()
+        timewatch.Reset()
         progress = -2
     End Sub
     Function Clamp(val, min, max) As Int32
@@ -265,7 +266,6 @@ Public Class Form1
         VideoOutputPath = TextBox5.Text
         CRTScope = CheckBox4.Checked
         LineWidth = NumericUpDown3.Value
-        LineClr = PictureBox1.BackColor
         BackClr = PictureBox2.BackColor
     End Sub
     Function ScaleImage(orig As Bitmap, w As Int32, h As Int32) As Bitmap
@@ -366,7 +366,6 @@ Public Class Form1
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        PictureBox1.BackColor = ColorTranslator.FromHtml("#7AFF3E")
         LineClr = ColorTranslator.FromHtml("#7AFF3E")
         ForegroundColorDlg.Color = ColorTranslator.FromHtml("#7AFF3E")
         Channels.Clear()
@@ -406,6 +405,7 @@ Public Class Form1
             Me.Text = "turboscope"
             Button1.Enabled = True
             Button8.Enabled = True
+            progress = 0
         End If
         Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}"
     End Sub
@@ -439,11 +439,11 @@ Public Class Form1
         UpdateChannels()
     End Sub
 
-    Private Sub PictureBox1_Click(sender As Object, e As EventArgs) Handles PictureBox1.Click
-        If ForegroundColorDlg.ShowDialog() = DialogResult.OK Then
-            PictureBox1.BackColor = ForegroundColorDlg.Color
-        End If
-    End Sub
+    'Private Sub PictureBox1_Click(sender As Object, e As EventArgs)
+    '    If ForegroundColorDlg.ShowDialog() = DialogResult.OK Then
+    '        PictureBox1.BackColor = ForegroundColorDlg.Color
+    '    End If
+    'End Sub
 
     Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
         If realVersion Then
@@ -461,11 +461,7 @@ Public Class Form1
         SaveSets()
         Dim bufBMP As New Bitmap(1280, 720)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bufBMP)
-            If realVersion Then
-                g.DrawImage(walls, 0, 0, 1280, 720)
-            Else
-                g.Clear(BackClr)
-            End If
+            g.Clear(BackClr)
             For i = 0 To Channels.Count - 1
                 If Channels(i).Enabled Then
                     MsgBox(Channels(i).AudioFile)
@@ -475,7 +471,8 @@ Public Class Form1
                             Channels(i).AudioData.samples(o) *= Channels(i).Multiplier
                         Next
                     End If
-                    DrawChannel(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, New Pen(LineClr), bufBMP)
+                    Dim clr As New Pen(Channels(i).LineColor)
+                    DrawChannel(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, clr, bufBMP)
                     Channels(i).AudioData = Nothing
                 End If
             Next
@@ -510,7 +507,8 @@ Public Class OscilloscopeChannel
     Public Property Multiplier As Single = 1
     <Description("Selects if the channel should be rendered.")>
     Public Property Enabled As Boolean = True
-
+    <Description("Selects the line color for the channel.")>
+    Public Property LineColor As Color = ColorTranslator.FromHtml("#7AFF3E")
 End Class
 Public Class AudioFileEditor
     Inherits UITypeEditor
