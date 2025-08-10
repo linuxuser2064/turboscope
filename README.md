@@ -5,10 +5,10 @@ An oscilloscope view program made in VB.net (and a bit of C#).
 - Video export
 - Peak speed triggering
 - Native CRT scope effect without resolution tricks
-- Customizable channel positioning and sizing (x/y/width/height are all customizable)
-- Custom line color and background color
+- Customizable channel positioning and sizing (X/Y/width/height are all customizable)
+- Custom line color (per-channel) and background color (global)
 - Single-frame preview
-- Background image support
+- Anti-aliasing support
 
 ## Building:
 Just open the solution in VS 2022 and build.
