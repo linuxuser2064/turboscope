@@ -1,11 +1,12 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Design
 Imports System.IO
-Imports System.Reflection
 Imports System.Windows.Forms.Design
+Imports System.Xml.Serialization
 Imports FFMediaToolkit
 Imports FFMediaToolkit.Encoding
 Imports NAudio.Wave
+Imports NAudio.Wave.SampleProviders
 Public Class Form1
     Public Channels As New List(Of OscilloscopeChannel)
     Dim ChannelCount As Int32 = 3
@@ -14,8 +15,6 @@ Public Class Form1
     Dim LineWidth As Int32 = 5
     Dim LineClr As Color
     Dim BackClr As Color = Color.Black
-    Dim realVersion As Boolean = False
-    Dim walls As Bitmap
 
     Dim DoAntiAliasing As Boolean = False
 
@@ -24,9 +23,14 @@ Public Class Form1
     Dim VideoOutputPath As String
     Dim MasterAudio As String
     Dim SampleRate As Int32 = 44100 ' stub
-    Dim VideoSize As New Size(1280, 720) ' stub
+
     Dim progress As Long = 0
     Dim maxprog As Long = 0
+    Dim DoResample As Boolean = False
+    Dim ResampleTo As Int32 = 0
+    Dim VideoBitrate = 10000000
+    Dim VideoFramerate = 50
+    Dim VideoSize As New Size(1280, 720) ' stub
     Public Function LoadWavSamples(filePath As String) As (samples As Single(), sampleRate As Integer)
         Dim reader As ISampleProvider = New AudioFileReader(filePath).ToMono
         Dim sampleRate = reader.WaveFormat.SampleRate
@@ -41,6 +45,23 @@ Public Class Form1
         Loop While read > 0
         Return (sampleList.ToArray(), sampleRate)
     End Function
+    Public Function LoadWavSamples(filePath As String, resampleRate As Integer) As (samples As Single(), sampleRate As Integer)
+        Dim fakereader As MediaFoundationResampler = New MediaFoundationResampler(New AudioFileReader(filePath).ToMono.ToWaveProvider16, resampleRate)
+        fakereader.ResamplerQuality = 60
+        Dim reader As ISampleProvider = fakereader.ToSampleProvider
+        Dim SampleRate = reader.WaveFormat.SampleRate
+        Dim sampleList As New List(Of Single)
+        Dim buffer(1023) As Single
+        Dim read As Integer
+        Do
+            read = reader.Read(buffer, 0, buffer.Length)
+            If read > 0 Then
+                sampleList.AddRange(buffer.Take(read))
+            End If
+        Loop While read > 0
+        Return (sampleList.ToArray(), SampleRate)
+    End Function
+
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Button1.Enabled = False
         Button8.Enabled = False
@@ -52,10 +73,10 @@ Public Class Form1
     Private Sub VideoWorker_DoWork(sender As Object, e As DoWorkEventArgs) Handles VideoWorker.DoWork
         timewatch.Start()
         FFmpegLoader.FFmpegPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\x86_64")
-
+        progress = -3
         For i = 0 To Channels.Count - 1
             If Channels(i).Enabled Then
-                Channels(i).AudioData = LoadWavSamples(Channels(i).AudioFile)
+                Channels(i).AudioData = If(DoResample, LoadWavSamples(Channels(i).AudioFile, ResampleTo), LoadWavSamples(Channels(i).AudioFile))
                 If Channels(i).Multiplier <> 1 Then
                     For o = 0 To Channels(i).AudioData.samples.Length - 1
                         Channels(i).AudioData.samples(o) *= Channels(i).Multiplier
@@ -66,6 +87,9 @@ Public Class Form1
 
         Dim length = Channels(0).AudioData.samples.Length
         SampleRate = Channels(0).AudioData.sampleRate
+        If CustomRunningTimeEnabled Then
+            CustomRunningTime = NumericUpDown1.Value * SampleRate
+        End If
         Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bmp)
             If DoAntiAliasing Then
@@ -74,22 +98,19 @@ Public Class Form1
                 g.SmoothingMode = Drawing2D.SmoothingMode.None
             End If
             Dim audioCounter As Long = 0
-            Dim samplesPerFrame As Integer = SampleRate \ 50
+            Dim samplesPerFrame As Integer = SampleRate \ VideoFramerate
             Dim drawSampleCount As Integer = SampleRate \ 15
-
             Dim vid = MediaBuilder.CreateContainer($"{VideoOutputPath}_raw.mp4", ContainerFormat.MP4).
-            WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, 50, VideoCodec.Default)).
+            WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, VideoFramerate, VideoCodec.H264) With {.Bitrate = VideoBitrate, .EncoderPreset = EncoderPreset.Fast}).
             Create
-
+            'vid.Video.Configuration.Bitrate = 1000000000
+            'vid.Video.Configuration.EncoderPreset = EncoderPreset.Fast
+            'vid.Video.Configuration.CRF = 19
+            maxprog = length
             While audioCounter < length
                 If CustomRunningTimeEnabled AndAlso audioCounter >= CustomRunningTime Then Exit While
                 If audioCounter + samplesPerFrame >= length Then Exit While
-                If realVersion Then
-                    g.DrawImageUnscaled(walls, 0, 0)
-                Else
-                    g.Clear(BackClr)
-                End If
-
+                g.Clear(BackClr)
                 For Each ch In Channels
                     If ch.Enabled Then
                         Dim clr As New Pen(ch.LineColor)
@@ -126,8 +147,14 @@ Public Class Form1
         timewatch.Reset()
         progress = -2
     End Sub
-    Function Clamp(val, min, max) As Int32
-        Return Math.Max(min, Math.Min(val, max))
+    Function Clamp(val As Int32, min As Int32, max As Int32) As Int32
+        If val < min Then
+            Return min
+        ElseIf val > max Then
+            Return max
+        Else
+            Return val
+        End If
     End Function
     Sub DrawChannel(ByRef g As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen, bmp As Bitmap)
         Dim width = channel.Width
@@ -207,10 +234,14 @@ Public Class Form1
         ' Center waveform around trigger
         Dim startIndex = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
 
-
         startIndex = Math.Max(0, Math.Min(startIndex, songData.Length - width - 1))
         'End If
         'Using fp As New FastPix(bmp)
+        Dim newClr As New Pen(lineColor.Color, LineWidth)
+        newClr.Width = LineWidth
+        newClr.StartCap = Drawing2D.LineCap.Round
+        newClr.EndCap = Drawing2D.LineCap.Round
+        newClr.LineJoin = Drawing2D.LineJoin.Round
         Dim prevVal = songData(startIndex)
         For i = startIndex To startIndex + width - 1
             Dim val = songData(i)
@@ -227,7 +258,6 @@ Public Class Form1
                     End If
                 Next
             Else
-                Dim newClr As New Pen(lineColor.Color, LineWidth)
                 If DoAntiAliasing Then
                     g.DrawLine(newClr, New PointF(i - startIndex + chanX, currentY), New PointF(i - startIndex + chanX - 1, prevY + 1))
                 Else
@@ -260,13 +290,15 @@ Public Class Form1
     Private Sub SaveSets()
         MasterAudio = TextBox4.Text
         CustomRunningTimeEnabled = CheckBox6.Checked
-        If CustomRunningTimeEnabled Then
-            CustomRunningTime = NumericUpDown1.Value * SampleRate
-        End If
         VideoOutputPath = TextBox5.Text
         CRTScope = CheckBox4.Checked
         LineWidth = NumericUpDown3.Value
         BackClr = PictureBox2.BackColor
+        DoResample = CheckBox7.Checked
+        ResampleTo = NumericUpDown4.Value
+        VideoSize = New Size(CInt(MaskedTextBox1.Text), CInt(MaskedTextBox2.Text))
+        VideoBitrate = CInt(MaskedTextBox3.Text) * 1000
+        VideoFramerate = NumericUpDown5.Value
     End Sub
     Function ScaleImage(orig As Bitmap, w As Int32, h As Int32) As Bitmap
         Dim newbmp As New Bitmap(w, h)
@@ -276,19 +308,19 @@ Public Class Form1
         Return newbmp
     End Function
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
-        MasterAudioOpenFileDialog1.ShowDialog()
+        MasterAudioOpenFileDialog.ShowDialog()
     End Sub
 
-    Private Sub MasterAudioOpenFileDialog1_FileOk(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles MasterAudioOpenFileDialog1.FileOk
-        TextBox4.Text = MasterAudioOpenFileDialog1.FileName
+    Private Sub MasterAudioOpenFileDialog1_FileOk(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles MasterAudioOpenFileDialog.FileOk
+        TextBox4.Text = MasterAudioOpenFileDialog.FileName
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
-        SaveFileDialog1.ShowDialog()
+        Mp4SaveDialog.ShowDialog()
     End Sub
 
-    Private Sub SaveFileDialog1_FileOk(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles SaveFileDialog1.FileOk
-        TextBox5.Text = SaveFileDialog1.FileName
+    Private Sub SaveFileDialog1_FileOk(sender As Object, e As System.ComponentModel.CancelEventArgs) Handles Mp4SaveDialog.FileOk
+        TextBox5.Text = Mp4SaveDialog.FileName
     End Sub
 
     Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
@@ -296,23 +328,23 @@ Public Class Form1
         UpdateChannels()
         Channels(0).X = 0
         Channels(0).Y = 0
-        Channels(0).Width = 1280
-        Channels(0).Height = 180
+        Channels(0).Width = VideoSize.Width
+        Channels(0).Height = VideoSize.Height \ 4
         Channels(0).Enabled = True
         Channels(1).X = 0
-        Channels(1).Y = 180
-        Channels(1).Width = 1280
-        Channels(1).Height = 180
+        Channels(1).Y = VideoSize.Height \ 4
+        Channels(1).Width = VideoSize.Width
+        Channels(1).Height = VideoSize.Height \ 4
         Channels(1).Enabled = True
         Channels(2).X = 0
-        Channels(2).Y = 360
-        Channels(2).Width = 1280
-        Channels(2).Height = 180
+        Channels(2).Y = (VideoSize.Height \ 4) * 2
+        Channels(2).Width = VideoSize.Width
+        Channels(2).Height = VideoSize.Height \ 4
         Channels(2).Enabled = True
         Channels(3).X = 0
-        Channels(3).Y = 540
-        Channels(3).Width = 1280
-        Channels(3).Height = 180
+        Channels(3).Y = (VideoSize.Height \ 4) * 3
+        Channels(3).Width = VideoSize.Width
+        Channels(3).Height = VideoSize.Height \ 4
         Channels(3).Enabled = True
         PropertyGrid1.Refresh()
     End Sub
@@ -322,18 +354,18 @@ Public Class Form1
         UpdateChannels()
         Channels(0).X = 0
         Channels(0).Y = 0
-        Channels(0).Width = 1280
-        Channels(0).Height = 240
+        Channels(0).Width = VideoSize.Width
+        Channels(0).Height = VideoSize.Height \ 3
         Channels(0).Enabled = True
         Channels(1).X = 0
-        Channels(1).Y = 240
-        Channels(1).Width = 1280
-        Channels(1).Height = 240
+        Channels(1).Y = VideoSize.Height \ 3
+        Channels(1).Width = VideoSize.Width
+        Channels(1).Height = VideoSize.Height \ 3
         Channels(1).Enabled = True
         Channels(2).X = 0
-        Channels(2).Y = 480
-        Channels(2).Width = 1280
-        Channels(2).Height = 240
+        Channels(2).Y = (VideoSize.Height \ 3) * 2
+        Channels(2).Width = VideoSize.Width
+        Channels(2).Height = VideoSize.Height \ 3
         Channels(2).Enabled = True
         PropertyGrid1.Refresh()
     End Sub
@@ -343,13 +375,13 @@ Public Class Form1
         UpdateChannels()
         Channels(0).X = 0
         Channels(0).Y = 0
-        Channels(0).Width = 1280
-        Channels(0).Height = 360
+        Channels(0).Width = VideoSize.Width
+        Channels(0).Height = VideoSize.Height \ 2
         Channels(0).Enabled = True
         Channels(1).X = 0
-        Channels(1).Y = 360
-        Channels(1).Width = 1280
-        Channels(1).Height = 360
+        Channels(1).Y = VideoSize.Height \ 2
+        Channels(1).Width = VideoSize.Width
+        Channels(1).Height = VideoSize.Width \ 2
         Channels(1).Enabled = True
         PropertyGrid1.Refresh()
     End Sub
@@ -359,8 +391,8 @@ Public Class Form1
         UpdateChannels()
         Channels(0).X = 0
         Channels(0).Y = 0
-        Channels(0).Width = 1280
-        Channels(0).Height = 720
+        Channels(0).Width = VideoSize.Width
+        Channels(0).Height = VideoSize.Height
         Channels(0).Enabled = True
         PropertyGrid1.Refresh()
     End Sub
@@ -373,22 +405,8 @@ Public Class Form1
         For i = 0 To 2
             Channels.Add(New OscilloscopeChannel)
         Next
-        Channels(0).X = NumericUpDown11.Value
-        Channels(0).Y = NumericUpDown12.Value
-        Channels(0).Width = NumericUpDown13.Value
-        Channels(0).Height = NumericUpDown14.Value
-        Channels(0).Enabled = CheckBox1.Checked
-        Channels(1).X = NumericUpDown21.Value
-        Channels(1).Y = NumericUpDown22.Value
-        Channels(1).Width = NumericUpDown23.Value
-        Channels(1).Height = NumericUpDown24.Value
-        Channels(1).Enabled = CheckBox2.Checked
-        Channels(2).X = NumericUpDown31.Value
-        Channels(2).Y = NumericUpDown32.Value
-        Channels(2).Width = NumericUpDown33.Value
-        Channels(2).Height = NumericUpDown34.Value
-        Channels(2).Enabled = CheckBox3.Checked
         ComboBox1.SelectedIndex = 0
+        Button2.PerformClick()
         PropertyGrid1.SelectedObject = Channels(0)
     End Sub
 
@@ -406,6 +424,11 @@ Public Class Form1
             Button1.Enabled = True
             Button8.Enabled = True
             progress = 0
+            Exit Sub
+        End If
+        If progress = -3 Then
+            Me.Text = "Loading samples..."
+            Exit Sub
         End If
         Me.Text = $"Progress: {Math.Round(progress / div, 2)}% (real {progress / SampleRate}s) - {timewatch.Elapsed.ToString("hh\:mm\:ss")}"
     End Sub
@@ -439,27 +462,15 @@ Public Class Form1
         UpdateChannels()
     End Sub
 
-    'Private Sub PictureBox1_Click(sender As Object, e As EventArgs)
-    '    If ForegroundColorDlg.ShowDialog() = DialogResult.OK Then
-    '        PictureBox1.BackColor = ForegroundColorDlg.Color
-    '    End If
-    'End Sub
-
     Private Sub PictureBox2_Click(sender As Object, e As EventArgs) Handles PictureBox2.Click
-        If realVersion Then
-            If BackgroundColorDlg.ShowDialog() = DialogResult.OK Then
-                PictureBox2.BackColor = BackgroundColorDlg.Color
-            End If
-        Else
-            If RealVersionOpenFileDialog.ShowDialog = DialogResult.OK Then
-                PictureBox2.BackgroundImage = Image.FromFile(RealVersionOpenFileDialog.FileName)
-            End If
+        If BackgroundColorDlg.ShowDialog() = DialogResult.OK Then
+            PictureBox2.BackColor = BackgroundColorDlg.Color
         End If
     End Sub
 
     Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
         SaveSets()
-        Dim bufBMP As New Bitmap(1280, 720)
+        Dim bufBMP As New Bitmap(VideoSize.Width, VideoSize.Height)
         Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bufBMP)
             g.Clear(BackClr)
             For i = 0 To Channels.Count - 1
@@ -486,6 +497,44 @@ Public Class Form1
 
     Private Sub CheckBox5_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox5.CheckedChanged
         DoAntiAliasing = CheckBox5.Checked
+    End Sub
+
+    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+        If OscilloscopeSettingsSaveDialog.ShowDialog = DialogResult.OK Then
+            Dim sets As New OscilloscopeSettings
+            sets.Channels = Me.Channels
+            sets.ChannelColor = New List(Of (r As Integer, g As Integer, b As Integer))
+            For i = 0 To Channels.Count - 1
+                sets.ChannelColor.Add((Channels(i).LineColor.R, Channels(i).LineColor.G, Channels(i).LineColor.B))
+            Next
+            Dim turd As New XmlSerializer(sets.GetType)
+            Dim stream As New FileStream(OscilloscopeSettingsSaveDialog.FileName, FileMode.Create, FileAccess.Write)
+            turd.Serialize(stream, sets)
+            stream.Dispose()
+        End If
+    End Sub
+
+    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+        If OscilloscopeSettingsOpenDialog.ShowDialog = DialogResult.OK Then
+            Dim sets As New OscilloscopeSettings
+            Dim turd As New XmlSerializer(sets.GetType)
+            Dim stream As New FileStream(OscilloscopeSettingsOpenDialog.FileName, FileMode.Open, FileAccess.ReadWrite)
+            sets = turd.Deserialize(stream)
+            Me.Channels = sets.Channels
+            For i = 0 To Channels.Count - 1
+                Channels(i).LineColor = Color.FromArgb(sets.ChannelColor(i).r, sets.ChannelColor(i).g, sets.ChannelColor(i).b)
+            Next
+            ChannelCount = sets.Channels.Count
+            UpdateChannels()
+            PropertyGrid1.Refresh()
+            stream.Dispose()
+        End If
+    End Sub
+
+    Private Sub MaskedTextBox1_TextChanged(sender As Object, e As EventArgs) Handles MaskedTextBox2.TextChanged, MaskedTextBox1.TextChanged
+        If (MaskedTextBox1.Text = "") = False AndAlso (MaskedTextBox2.Text = "") = False Then
+            VideoSize = New Size(CInt(MaskedTextBox1.Text), CInt(MaskedTextBox2.Text))
+        End If
     End Sub
 End Class
 Public Class OscilloscopeChannel
@@ -528,4 +577,8 @@ Public Class AudioFileEditor
         End If
         Return value
     End Function
+End Class
+Public Class OscilloscopeSettings
+    Public Channels As List(Of OscilloscopeChannel)
+    Public ChannelColor As List(Of (r As Int32, g As Int32, b As Int32))
 End Class

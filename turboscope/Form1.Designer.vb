@@ -30,6 +30,17 @@ Partial Class Form1
         Me.Button5 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.NumericUpDown5 = New System.Windows.Forms.NumericUpDown()
+        Me.Label26 = New System.Windows.Forms.Label()
+        Me.MaskedTextBox3 = New System.Windows.Forms.MaskedTextBox()
+        Me.Label25 = New System.Windows.Forms.Label()
+        Me.MaskedTextBox2 = New System.Windows.Forms.MaskedTextBox()
+        Me.MaskedTextBox1 = New System.Windows.Forms.MaskedTextBox()
+        Me.Label24 = New System.Windows.Forms.Label()
+        Me.Label23 = New System.Windows.Forms.Label()
+        Me.Label21 = New System.Windows.Forms.Label()
+        Me.NumericUpDown4 = New System.Windows.Forms.NumericUpDown()
+        Me.CheckBox7 = New System.Windows.Forms.CheckBox()
         Me.CheckBox5 = New System.Windows.Forms.CheckBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
@@ -44,48 +55,9 @@ Partial Class Form1
         Me.Button3 = New System.Windows.Forms.Button()
         Me.TextBox4 = New System.Windows.Forms.TextBox()
         Me.Label16 = New System.Windows.Forms.Label()
-        Me.GroupBox3 = New System.Windows.Forms.GroupBox()
-        Me.CheckBox3 = New System.Windows.Forms.CheckBox()
-        Me.Button31 = New System.Windows.Forms.Button()
-        Me.TextBox3 = New System.Windows.Forms.TextBox()
-        Me.Label11 = New System.Windows.Forms.Label()
-        Me.NumericUpDown34 = New System.Windows.Forms.NumericUpDown()
-        Me.Label12 = New System.Windows.Forms.Label()
-        Me.NumericUpDown33 = New System.Windows.Forms.NumericUpDown()
-        Me.Label13 = New System.Windows.Forms.Label()
-        Me.NumericUpDown32 = New System.Windows.Forms.NumericUpDown()
-        Me.Label14 = New System.Windows.Forms.Label()
-        Me.NumericUpDown31 = New System.Windows.Forms.NumericUpDown()
-        Me.Label15 = New System.Windows.Forms.Label()
-        Me.GroupBox2 = New System.Windows.Forms.GroupBox()
-        Me.CheckBox2 = New System.Windows.Forms.CheckBox()
-        Me.Button21 = New System.Windows.Forms.Button()
-        Me.TextBox2 = New System.Windows.Forms.TextBox()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.NumericUpDown24 = New System.Windows.Forms.NumericUpDown()
-        Me.Label7 = New System.Windows.Forms.Label()
-        Me.NumericUpDown23 = New System.Windows.Forms.NumericUpDown()
-        Me.Label8 = New System.Windows.Forms.Label()
-        Me.NumericUpDown22 = New System.Windows.Forms.NumericUpDown()
-        Me.Label9 = New System.Windows.Forms.Label()
-        Me.NumericUpDown21 = New System.Windows.Forms.NumericUpDown()
-        Me.Label10 = New System.Windows.Forms.Label()
-        Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
-        Me.Button11 = New System.Windows.Forms.Button()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
-        Me.Label5 = New System.Windows.Forms.Label()
-        Me.NumericUpDown14 = New System.Windows.Forms.NumericUpDown()
-        Me.Label3 = New System.Windows.Forms.Label()
-        Me.NumericUpDown13 = New System.Windows.Forms.NumericUpDown()
-        Me.Label4 = New System.Windows.Forms.Label()
-        Me.NumericUpDown12 = New System.Windows.Forms.NumericUpDown()
-        Me.Label2 = New System.Windows.Forms.Label()
-        Me.NumericUpDown11 = New System.Windows.Forms.NumericUpDown()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
-        Me.MasterAudioOpenFileDialog1 = New System.Windows.Forms.OpenFileDialog()
-        Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
+        Me.MasterAudioOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.Mp4SaveDialog = New System.Windows.Forms.SaveFileDialog()
         Me.VideoWorker = New System.ComponentModel.BackgroundWorker()
         Me.CheckBox6 = New System.Windows.Forms.CheckBox()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
@@ -96,27 +68,18 @@ Partial Class Form1
         Me.BackgroundColorDlg = New System.Windows.Forms.ColorDialog()
         Me.ForegroundColorDlg = New System.Windows.Forms.ColorDialog()
         Me.Button8 = New System.Windows.Forms.Button()
-        Me.RealVersionOpenFileDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.Button9 = New System.Windows.Forms.Button()
+        Me.Button10 = New System.Windows.Forms.Button()
+        Me.OscilloscopeSettingsOpenDialog = New System.Windows.Forms.OpenFileDialog()
+        Me.OscilloscopeSettingsSaveDialog = New System.Windows.Forms.SaveFileDialog()
+        Me.Label1 = New System.Windows.Forms.Label()
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox3.SuspendLayout()
-        CType(Me.NumericUpDown34, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown33, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown32, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown31, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox2.SuspendLayout()
-        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown23, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown22, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown21, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.GroupBox1.SuspendLayout()
-        CType(Me.NumericUpDown14, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown13, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown12, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.NumericUpDown11, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -171,6 +134,18 @@ Partial Class Form1
         '
         'GroupBox4
         '
+        Me.GroupBox4.Controls.Add(Me.Label1)
+        Me.GroupBox4.Controls.Add(Me.NumericUpDown5)
+        Me.GroupBox4.Controls.Add(Me.Label26)
+        Me.GroupBox4.Controls.Add(Me.MaskedTextBox3)
+        Me.GroupBox4.Controls.Add(Me.Label25)
+        Me.GroupBox4.Controls.Add(Me.MaskedTextBox2)
+        Me.GroupBox4.Controls.Add(Me.MaskedTextBox1)
+        Me.GroupBox4.Controls.Add(Me.Label24)
+        Me.GroupBox4.Controls.Add(Me.Label23)
+        Me.GroupBox4.Controls.Add(Me.Label21)
+        Me.GroupBox4.Controls.Add(Me.NumericUpDown4)
+        Me.GroupBox4.Controls.Add(Me.CheckBox7)
         Me.GroupBox4.Controls.Add(Me.CheckBox5)
         Me.GroupBox4.Controls.Add(Me.Label22)
         Me.GroupBox4.Controls.Add(Me.PictureBox2)
@@ -192,10 +167,114 @@ Partial Class Form1
         Me.GroupBox4.TabStop = False
         Me.GroupBox4.Text = "Global"
         '
+        'NumericUpDown5
+        '
+        Me.NumericUpDown5.Location = New System.Drawing.Point(110, 180)
+        Me.NumericUpDown5.Name = "NumericUpDown5"
+        Me.NumericUpDown5.Size = New System.Drawing.Size(42, 20)
+        Me.NumericUpDown5.TabIndex = 38
+        Me.NumericUpDown5.Value = New Decimal(New Integer() {50, 0, 0, 0})
+        '
+        'Label26
+        '
+        Me.Label26.AutoSize = True
+        Me.Label26.Location = New System.Drawing.Point(90, 184)
+        Me.Label26.Name = "Label26"
+        Me.Label26.Size = New System.Drawing.Size(18, 13)
+        Me.Label26.TabIndex = 37
+        Me.Label26.Text = "@"
+        '
+        'MaskedTextBox3
+        '
+        Me.MaskedTextBox3.HidePromptOnLeave = True
+        Me.MaskedTextBox3.Location = New System.Drawing.Point(6, 218)
+        Me.MaskedTextBox3.Mask = "99999"
+        Me.MaskedTextBox3.Name = "MaskedTextBox3"
+        Me.MaskedTextBox3.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.MaskedTextBox3.Size = New System.Drawing.Size(78, 20)
+        Me.MaskedTextBox3.TabIndex = 36
+        Me.MaskedTextBox3.Text = "5000"
+        '
+        'Label25
+        '
+        Me.Label25.AutoSize = True
+        Me.Label25.Location = New System.Drawing.Point(6, 204)
+        Me.Label25.Name = "Label25"
+        Me.Label25.Size = New System.Drawing.Size(72, 13)
+        Me.Label25.TabIndex = 35
+        Me.Label25.Text = "Bitrate: (kbps)"
+        '
+        'MaskedTextBox2
+        '
+        Me.MaskedTextBox2.Location = New System.Drawing.Point(54, 180)
+        Me.MaskedTextBox2.Mask = "9999"
+        Me.MaskedTextBox2.Name = "MaskedTextBox2"
+        Me.MaskedTextBox2.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.MaskedTextBox2.Size = New System.Drawing.Size(34, 20)
+        Me.MaskedTextBox2.TabIndex = 34
+        Me.MaskedTextBox2.Text = "720"
+        '
+        'MaskedTextBox1
+        '
+        Me.MaskedTextBox1.HidePromptOnLeave = True
+        Me.MaskedTextBox1.Location = New System.Drawing.Point(6, 180)
+        Me.MaskedTextBox1.Mask = "9999"
+        Me.MaskedTextBox1.Name = "MaskedTextBox1"
+        Me.MaskedTextBox1.PromptChar = Global.Microsoft.VisualBasic.ChrW(32)
+        Me.MaskedTextBox1.Size = New System.Drawing.Size(34, 20)
+        Me.MaskedTextBox1.TabIndex = 33
+        Me.MaskedTextBox1.Text = "1280"
+        '
+        'Label24
+        '
+        Me.Label24.AutoSize = True
+        Me.Label24.Location = New System.Drawing.Point(42, 184)
+        Me.Label24.Name = "Label24"
+        Me.Label24.Size = New System.Drawing.Size(12, 13)
+        Me.Label24.TabIndex = 32
+        Me.Label24.Text = "x"
+        '
+        'Label23
+        '
+        Me.Label23.AutoSize = True
+        Me.Label23.Location = New System.Drawing.Point(6, 166)
+        Me.Label23.Name = "Label23"
+        Me.Label23.Size = New System.Drawing.Size(58, 13)
+        Me.Label23.TabIndex = 30
+        Me.Label23.Text = "Video size:"
+        '
+        'Label21
+        '
+        Me.Label21.AutoSize = True
+        Me.Label21.Location = New System.Drawing.Point(163, 150)
+        Me.Label21.Name = "Label21"
+        Me.Label21.Size = New System.Drawing.Size(20, 13)
+        Me.Label21.TabIndex = 29
+        Me.Label21.Text = "Hz"
+        '
+        'NumericUpDown4
+        '
+        Me.NumericUpDown4.Location = New System.Drawing.Point(90, 147)
+        Me.NumericUpDown4.Maximum = New Decimal(New Integer() {384000, 0, 0, 0})
+        Me.NumericUpDown4.Name = "NumericUpDown4"
+        Me.NumericUpDown4.Size = New System.Drawing.Size(72, 20)
+        Me.NumericUpDown4.TabIndex = 28
+        Me.NumericUpDown4.Value = New Decimal(New Integer() {44100, 0, 0, 0})
+        '
+        'CheckBox7
+        '
+        Me.CheckBox7.AutoSize = True
+        Me.CheckBox7.Location = New System.Drawing.Point(9, 148)
+        Me.CheckBox7.Name = "CheckBox7"
+        Me.CheckBox7.Size = New System.Drawing.Size(85, 17)
+        Me.CheckBox7.TabIndex = 27
+        Me.CheckBox7.Text = "Resample to"
+        Me.CheckBox7.UseVisualStyleBackColor = True
+        '
         'CheckBox5
         '
         Me.CheckBox5.AutoSize = True
-        Me.CheckBox5.Location = New System.Drawing.Point(95, 129)
+        Me.CheckBox5.Location = New System.Drawing.Point(95, 125)
         Me.CheckBox5.Name = "CheckBox5"
         Me.CheckBox5.Size = New System.Drawing.Size(82, 17)
         Me.CheckBox5.TabIndex = 26
@@ -205,7 +284,7 @@ Partial Class Form1
         'Label22
         '
         Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(44, 182)
+        Me.Label22.Location = New System.Drawing.Point(92, 204)
         Me.Label22.Name = "Label22"
         Me.Label22.Size = New System.Drawing.Size(94, 13)
         Me.Label22.TabIndex = 25
@@ -214,9 +293,9 @@ Partial Class Form1
         'PictureBox2
         '
         Me.PictureBox2.BackColor = System.Drawing.Color.Black
-        Me.PictureBox2.Location = New System.Drawing.Point(70, 198)
+        Me.PictureBox2.Location = New System.Drawing.Point(126, 218)
         Me.PictureBox2.Name = "PictureBox2"
-        Me.PictureBox2.Size = New System.Drawing.Size(32, 32)
+        Me.PictureBox2.Size = New System.Drawing.Size(32, 20)
         Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox2.TabIndex = 24
         Me.PictureBox2.TabStop = False
@@ -226,7 +305,7 @@ Partial Class Form1
         Me.CheckBox4.AutoSize = True
         Me.CheckBox4.Checked = True
         Me.CheckBox4.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox4.Location = New System.Drawing.Point(9, 129)
+        Me.CheckBox4.Location = New System.Drawing.Point(9, 125)
         Me.CheckBox4.Name = "CheckBox4"
         Me.CheckBox4.Size = New System.Drawing.Size(80, 17)
         Me.CheckBox4.TabIndex = 21
@@ -235,7 +314,7 @@ Partial Class Form1
         '
         'NumericUpDown3
         '
-        Me.NumericUpDown3.Location = New System.Drawing.Point(60, 103)
+        Me.NumericUpDown3.Location = New System.Drawing.Point(60, 98)
         Me.NumericUpDown3.Name = "NumericUpDown3"
         Me.NumericUpDown3.Size = New System.Drawing.Size(116, 20)
         Me.NumericUpDown3.TabIndex = 20
@@ -244,7 +323,7 @@ Partial Class Form1
         'Label20
         '
         Me.Label20.AutoSize = True
-        Me.Label20.Location = New System.Drawing.Point(1, 105)
+        Me.Label20.Location = New System.Drawing.Point(1, 100)
         Me.Label20.Name = "Label20"
         Me.Label20.Size = New System.Drawing.Size(58, 13)
         Me.Label20.TabIndex = 19
@@ -317,417 +396,22 @@ Partial Class Form1
         Me.Label16.TabIndex = 11
         Me.Label16.Text = "Master:"
         '
-        'GroupBox3
-        '
-        Me.GroupBox3.Controls.Add(Me.CheckBox3)
-        Me.GroupBox3.Controls.Add(Me.Button31)
-        Me.GroupBox3.Controls.Add(Me.TextBox3)
-        Me.GroupBox3.Controls.Add(Me.Label11)
-        Me.GroupBox3.Controls.Add(Me.NumericUpDown34)
-        Me.GroupBox3.Controls.Add(Me.Label12)
-        Me.GroupBox3.Controls.Add(Me.NumericUpDown33)
-        Me.GroupBox3.Controls.Add(Me.Label13)
-        Me.GroupBox3.Controls.Add(Me.NumericUpDown32)
-        Me.GroupBox3.Controls.Add(Me.Label14)
-        Me.GroupBox3.Controls.Add(Me.NumericUpDown31)
-        Me.GroupBox3.Controls.Add(Me.Label15)
-        Me.GroupBox3.Location = New System.Drawing.Point(446, 242)
-        Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(187, 110)
-        Me.GroupBox3.TabIndex = 9
-        Me.GroupBox3.TabStop = False
-        Me.GroupBox3.Text = "CH3"
-        Me.GroupBox3.Visible = False
-        '
-        'CheckBox3
-        '
-        Me.CheckBox3.AutoSize = True
-        Me.CheckBox3.Checked = True
-        Me.CheckBox3.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox3.Location = New System.Drawing.Point(5, 89)
-        Me.CheckBox3.Name = "CheckBox3"
-        Me.CheckBox3.Size = New System.Drawing.Size(102, 17)
-        Me.CheckBox3.TabIndex = 11
-        Me.CheckBox3.Text = "Render channel"
-        Me.CheckBox3.UseVisualStyleBackColor = True
-        '
-        'Button31
-        '
-        Me.Button31.Location = New System.Drawing.Point(156, 63)
-        Me.Button31.Name = "Button31"
-        Me.Button31.Size = New System.Drawing.Size(21, 22)
-        Me.Button31.TabIndex = 10
-        Me.Button31.Text = "..."
-        Me.Button31.UseVisualStyleBackColor = True
-        '
-        'TextBox3
-        '
-        Me.TextBox3.Location = New System.Drawing.Point(34, 64)
-        Me.TextBox3.Name = "TextBox3"
-        Me.TextBox3.Size = New System.Drawing.Size(122, 20)
-        Me.TextBox3.TabIndex = 9
-        Me.TextBox3.Text = "B:\Downloads\mapocalypse_fixed-03.wav"
-        '
-        'Label11
-        '
-        Me.Label11.AutoSize = True
-        Me.Label11.Location = New System.Drawing.Point(5, 67)
-        Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(26, 13)
-        Me.Label11.TabIndex = 8
-        Me.Label11.Text = "File:"
-        '
-        'NumericUpDown34
-        '
-        Me.NumericUpDown34.Location = New System.Drawing.Point(112, 40)
-        Me.NumericUpDown34.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown34.Name = "NumericUpDown34"
-        Me.NumericUpDown34.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown34.TabIndex = 7
-        Me.NumericUpDown34.Value = New Decimal(New Integer() {240, 0, 0, 0})
-        '
-        'Label12
-        '
-        Me.Label12.AutoSize = True
-        Me.Label12.Location = New System.Drawing.Point(94, 42)
-        Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(18, 13)
-        Me.Label12.TabIndex = 6
-        Me.Label12.Text = "H:"
-        '
-        'NumericUpDown33
-        '
-        Me.NumericUpDown33.Location = New System.Drawing.Point(22, 40)
-        Me.NumericUpDown33.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown33.Name = "NumericUpDown33"
-        Me.NumericUpDown33.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown33.TabIndex = 5
-        Me.NumericUpDown33.Value = New Decimal(New Integer() {1280, 0, 0, 0})
-        '
-        'Label13
-        '
-        Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(3, 42)
-        Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(21, 13)
-        Me.Label13.TabIndex = 4
-        Me.Label13.Text = "W:"
-        '
-        'NumericUpDown32
-        '
-        Me.NumericUpDown32.Location = New System.Drawing.Point(112, 15)
-        Me.NumericUpDown32.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown32.Name = "NumericUpDown32"
-        Me.NumericUpDown32.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown32.TabIndex = 3
-        Me.NumericUpDown32.Value = New Decimal(New Integer() {480, 0, 0, 0})
-        '
-        'Label14
-        '
-        Me.Label14.AutoSize = True
-        Me.Label14.Location = New System.Drawing.Point(95, 16)
-        Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(17, 13)
-        Me.Label14.TabIndex = 2
-        Me.Label14.Text = "Y:"
-        '
-        'NumericUpDown31
-        '
-        Me.NumericUpDown31.Enabled = False
-        Me.NumericUpDown31.Location = New System.Drawing.Point(22, 15)
-        Me.NumericUpDown31.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown31.Name = "NumericUpDown31"
-        Me.NumericUpDown31.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown31.TabIndex = 1
-        '
-        'Label15
-        '
-        Me.Label15.AutoSize = True
-        Me.Label15.Location = New System.Drawing.Point(5, 16)
-        Me.Label15.Name = "Label15"
-        Me.Label15.Size = New System.Drawing.Size(17, 13)
-        Me.Label15.TabIndex = 0
-        Me.Label15.Text = "X:"
-        '
-        'GroupBox2
-        '
-        Me.GroupBox2.Controls.Add(Me.CheckBox2)
-        Me.GroupBox2.Controls.Add(Me.Button21)
-        Me.GroupBox2.Controls.Add(Me.TextBox2)
-        Me.GroupBox2.Controls.Add(Me.Label6)
-        Me.GroupBox2.Controls.Add(Me.NumericUpDown24)
-        Me.GroupBox2.Controls.Add(Me.Label7)
-        Me.GroupBox2.Controls.Add(Me.NumericUpDown23)
-        Me.GroupBox2.Controls.Add(Me.Label8)
-        Me.GroupBox2.Controls.Add(Me.NumericUpDown22)
-        Me.GroupBox2.Controls.Add(Me.Label9)
-        Me.GroupBox2.Controls.Add(Me.NumericUpDown21)
-        Me.GroupBox2.Controls.Add(Me.Label10)
-        Me.GroupBox2.Location = New System.Drawing.Point(446, 127)
-        Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(187, 110)
-        Me.GroupBox2.TabIndex = 8
-        Me.GroupBox2.TabStop = False
-        Me.GroupBox2.Text = "CH2"
-        Me.GroupBox2.Visible = False
-        '
-        'CheckBox2
-        '
-        Me.CheckBox2.AutoSize = True
-        Me.CheckBox2.Checked = True
-        Me.CheckBox2.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox2.Location = New System.Drawing.Point(5, 89)
-        Me.CheckBox2.Name = "CheckBox2"
-        Me.CheckBox2.Size = New System.Drawing.Size(102, 17)
-        Me.CheckBox2.TabIndex = 11
-        Me.CheckBox2.Text = "Render channel"
-        Me.CheckBox2.UseVisualStyleBackColor = True
-        '
-        'Button21
-        '
-        Me.Button21.Location = New System.Drawing.Point(156, 63)
-        Me.Button21.Name = "Button21"
-        Me.Button21.Size = New System.Drawing.Size(21, 22)
-        Me.Button21.TabIndex = 10
-        Me.Button21.Text = "..."
-        Me.Button21.UseVisualStyleBackColor = True
-        '
-        'TextBox2
-        '
-        Me.TextBox2.Location = New System.Drawing.Point(34, 64)
-        Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(122, 20)
-        Me.TextBox2.TabIndex = 9
-        Me.TextBox2.Text = "B:\Downloads\mapocalypse_fixed-02.wav"
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(5, 67)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(26, 13)
-        Me.Label6.TabIndex = 8
-        Me.Label6.Text = "File:"
-        '
-        'NumericUpDown24
-        '
-        Me.NumericUpDown24.Location = New System.Drawing.Point(112, 40)
-        Me.NumericUpDown24.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown24.Name = "NumericUpDown24"
-        Me.NumericUpDown24.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown24.TabIndex = 7
-        Me.NumericUpDown24.Value = New Decimal(New Integer() {240, 0, 0, 0})
-        '
-        'Label7
-        '
-        Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(94, 42)
-        Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(18, 13)
-        Me.Label7.TabIndex = 6
-        Me.Label7.Text = "H:"
-        '
-        'NumericUpDown23
-        '
-        Me.NumericUpDown23.Location = New System.Drawing.Point(22, 40)
-        Me.NumericUpDown23.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown23.Name = "NumericUpDown23"
-        Me.NumericUpDown23.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown23.TabIndex = 5
-        Me.NumericUpDown23.Value = New Decimal(New Integer() {1280, 0, 0, 0})
-        '
-        'Label8
-        '
-        Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(3, 42)
-        Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(21, 13)
-        Me.Label8.TabIndex = 4
-        Me.Label8.Text = "W:"
-        '
-        'NumericUpDown22
-        '
-        Me.NumericUpDown22.Location = New System.Drawing.Point(112, 15)
-        Me.NumericUpDown22.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown22.Name = "NumericUpDown22"
-        Me.NumericUpDown22.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown22.TabIndex = 3
-        Me.NumericUpDown22.Value = New Decimal(New Integer() {240, 0, 0, 0})
-        '
-        'Label9
-        '
-        Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(95, 16)
-        Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(17, 13)
-        Me.Label9.TabIndex = 2
-        Me.Label9.Text = "Y:"
-        '
-        'NumericUpDown21
-        '
-        Me.NumericUpDown21.Enabled = False
-        Me.NumericUpDown21.Location = New System.Drawing.Point(22, 15)
-        Me.NumericUpDown21.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown21.Name = "NumericUpDown21"
-        Me.NumericUpDown21.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown21.TabIndex = 1
-        '
-        'Label10
-        '
-        Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(5, 16)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(17, 13)
-        Me.Label10.TabIndex = 0
-        Me.Label10.Text = "X:"
-        '
-        'GroupBox1
-        '
-        Me.GroupBox1.Controls.Add(Me.CheckBox1)
-        Me.GroupBox1.Controls.Add(Me.Button11)
-        Me.GroupBox1.Controls.Add(Me.TextBox1)
-        Me.GroupBox1.Controls.Add(Me.Label5)
-        Me.GroupBox1.Controls.Add(Me.NumericUpDown14)
-        Me.GroupBox1.Controls.Add(Me.Label3)
-        Me.GroupBox1.Controls.Add(Me.NumericUpDown13)
-        Me.GroupBox1.Controls.Add(Me.Label4)
-        Me.GroupBox1.Controls.Add(Me.NumericUpDown12)
-        Me.GroupBox1.Controls.Add(Me.Label2)
-        Me.GroupBox1.Controls.Add(Me.NumericUpDown11)
-        Me.GroupBox1.Controls.Add(Me.Label1)
-        Me.GroupBox1.Location = New System.Drawing.Point(446, 12)
-        Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(187, 110)
-        Me.GroupBox1.TabIndex = 7
-        Me.GroupBox1.TabStop = False
-        Me.GroupBox1.Text = "Channel 1"
-        Me.GroupBox1.Visible = False
-        '
-        'CheckBox1
-        '
-        Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Checked = True
-        Me.CheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox1.Location = New System.Drawing.Point(5, 89)
-        Me.CheckBox1.Name = "CheckBox1"
-        Me.CheckBox1.Size = New System.Drawing.Size(102, 17)
-        Me.CheckBox1.TabIndex = 11
-        Me.CheckBox1.Text = "Render channel"
-        Me.CheckBox1.UseVisualStyleBackColor = True
-        '
-        'Button11
-        '
-        Me.Button11.Location = New System.Drawing.Point(156, 63)
-        Me.Button11.Name = "Button11"
-        Me.Button11.Size = New System.Drawing.Size(21, 22)
-        Me.Button11.TabIndex = 10
-        Me.Button11.Text = "..."
-        Me.Button11.UseVisualStyleBackColor = True
-        '
-        'TextBox1
-        '
-        Me.TextBox1.Location = New System.Drawing.Point(34, 64)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(122, 20)
-        Me.TextBox1.TabIndex = 9
-        Me.TextBox1.Text = "B:\Downloads\mapocalypse_fixed-01.wav"
-        '
-        'Label5
-        '
-        Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(5, 67)
-        Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(26, 13)
-        Me.Label5.TabIndex = 8
-        Me.Label5.Text = "File:"
-        '
-        'NumericUpDown14
-        '
-        Me.NumericUpDown14.Location = New System.Drawing.Point(112, 40)
-        Me.NumericUpDown14.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown14.Name = "NumericUpDown14"
-        Me.NumericUpDown14.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown14.TabIndex = 7
-        Me.NumericUpDown14.Value = New Decimal(New Integer() {240, 0, 0, 0})
-        '
-        'Label3
-        '
-        Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(94, 42)
-        Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(18, 13)
-        Me.Label3.TabIndex = 6
-        Me.Label3.Text = "H:"
-        '
-        'NumericUpDown13
-        '
-        Me.NumericUpDown13.Location = New System.Drawing.Point(22, 40)
-        Me.NumericUpDown13.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown13.Name = "NumericUpDown13"
-        Me.NumericUpDown13.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown13.TabIndex = 5
-        Me.NumericUpDown13.Value = New Decimal(New Integer() {1280, 0, 0, 0})
-        '
-        'Label4
-        '
-        Me.Label4.AutoSize = True
-        Me.Label4.Location = New System.Drawing.Point(3, 42)
-        Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(21, 13)
-        Me.Label4.TabIndex = 4
-        Me.Label4.Text = "W:"
-        '
-        'NumericUpDown12
-        '
-        Me.NumericUpDown12.Location = New System.Drawing.Point(112, 15)
-        Me.NumericUpDown12.Maximum = New Decimal(New Integer() {720, 0, 0, 0})
-        Me.NumericUpDown12.Name = "NumericUpDown12"
-        Me.NumericUpDown12.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown12.TabIndex = 3
-        '
-        'Label2
-        '
-        Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(95, 16)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(17, 13)
-        Me.Label2.TabIndex = 2
-        Me.Label2.Text = "Y:"
-        '
-        'NumericUpDown11
-        '
-        Me.NumericUpDown11.Enabled = False
-        Me.NumericUpDown11.Location = New System.Drawing.Point(22, 15)
-        Me.NumericUpDown11.Maximum = New Decimal(New Integer() {1280, 0, 0, 0})
-        Me.NumericUpDown11.Name = "NumericUpDown11"
-        Me.NumericUpDown11.Size = New System.Drawing.Size(64, 20)
-        Me.NumericUpDown11.TabIndex = 1
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(5, 16)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(17, 13)
-        Me.Label1.TabIndex = 0
-        Me.Label1.Text = "X:"
-        '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(211, 354)
+        Me.Button1.Location = New System.Drawing.Point(246, 352)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 12
         Me.Button1.Text = "Start"
         Me.Button1.UseVisualStyleBackColor = True
         '
-        'MasterAudioOpenFileDialog1
+        'MasterAudioOpenFileDialog
         '
-        Me.MasterAudioOpenFileDialog1.Filter = "Audio files|*.wav;*.mp3;.aiff|All files|*"
+        Me.MasterAudioOpenFileDialog.Filter = "Audio files|*.wav;*.mp3;.aiff|All files|*"
         '
-        'SaveFileDialog1
+        'Mp4SaveDialog
         '
-        Me.SaveFileDialog1.Filter = "MP4 files|*.mp4|All files|*"
+        Me.Mp4SaveDialog.Filter = "MP4 files|*.mp4|All files|*"
         '
         'VideoWorker
         '
@@ -767,7 +451,7 @@ Partial Class Form1
         '
         Me.PropertyGrid1.Location = New System.Drawing.Point(2, 22)
         Me.PropertyGrid1.Name = "PropertyGrid1"
-        Me.PropertyGrid1.Size = New System.Drawing.Size(203, 355)
+        Me.PropertyGrid1.Size = New System.Drawing.Size(203, 327)
         Me.PropertyGrid1.TabIndex = 16
         '
         'ComboBox1
@@ -789,22 +473,56 @@ Partial Class Form1
         '
         'Button8
         '
-        Me.Button8.Location = New System.Drawing.Point(292, 354)
+        Me.Button8.Location = New System.Drawing.Point(327, 352)
         Me.Button8.Name = "Button8"
         Me.Button8.Size = New System.Drawing.Size(75, 23)
         Me.Button8.TabIndex = 18
         Me.Button8.Text = "Preview"
         Me.Button8.UseVisualStyleBackColor = True
         '
-        'RealVersionOpenFileDialog
+        'Button9
         '
-        Me.RealVersionOpenFileDialog.Filter = "Images|*.png;*.jpg';*.bmp;*.gif;'*.jpeg|All files|*"
+        Me.Button9.Location = New System.Drawing.Point(2, 352)
+        Me.Button9.Name = "Button9"
+        Me.Button9.Size = New System.Drawing.Size(98, 23)
+        Me.Button9.TabIndex = 19
+        Me.Button9.Text = "Save settings"
+        Me.Button9.UseVisualStyleBackColor = True
+        '
+        'Button10
+        '
+        Me.Button10.Location = New System.Drawing.Point(107, 352)
+        Me.Button10.Name = "Button10"
+        Me.Button10.Size = New System.Drawing.Size(98, 23)
+        Me.Button10.TabIndex = 20
+        Me.Button10.Text = "Load settings"
+        Me.Button10.UseVisualStyleBackColor = True
+        '
+        'OscilloscopeSettingsOpenDialog
+        '
+        Me.OscilloscopeSettingsOpenDialog.Filter = "XML files|*.xml|All files|*"
+        '
+        'OscilloscopeSettingsSaveDialog
+        '
+        Me.OscilloscopeSettingsSaveDialog.DefaultExt = "xml"
+        Me.OscilloscopeSettingsSaveDialog.Filter = "XML files|*.xml|All files|*"
+        '
+        'Label1
+        '
+        Me.Label1.AutoSize = True
+        Me.Label1.Location = New System.Drawing.Point(155, 184)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(27, 13)
+        Me.Label1.TabIndex = 39
+        Me.Label1.Text = "FPS"
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(402, 377)
+        Me.ClientSize = New System.Drawing.Size(403, 375)
+        Me.Controls.Add(Me.Button10)
+        Me.Controls.Add(Me.Button9)
         Me.Controls.Add(Me.Button8)
         Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.PropertyGrid1)
@@ -814,9 +532,6 @@ Partial Class Form1
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.GroupBox5)
         Me.Controls.Add(Me.GroupBox4)
-        Me.Controls.Add(Me.GroupBox3)
-        Me.Controls.Add(Me.GroupBox2)
-        Me.Controls.Add(Me.GroupBox1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
@@ -825,27 +540,11 @@ Partial Class Form1
         Me.GroupBox5.ResumeLayout(False)
         Me.GroupBox4.ResumeLayout(False)
         Me.GroupBox4.PerformLayout()
+        CType(Me.NumericUpDown5, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown4, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown3, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox3.ResumeLayout(False)
-        Me.GroupBox3.PerformLayout()
-        CType(Me.NumericUpDown34, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown33, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown32, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown31, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox2.ResumeLayout(False)
-        Me.GroupBox2.PerformLayout()
-        CType(Me.NumericUpDown24, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown23, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown22, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown21, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.GroupBox1.ResumeLayout(False)
-        Me.GroupBox1.PerformLayout()
-        CType(Me.NumericUpDown14, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown13, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown12, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.NumericUpDown11, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -863,48 +562,9 @@ Partial Class Form1
     Friend WithEvents Button3 As Button
     Friend WithEvents TextBox4 As TextBox
     Friend WithEvents Label16 As Label
-    Friend WithEvents GroupBox3 As GroupBox
-    Friend WithEvents CheckBox3 As CheckBox
-    Friend WithEvents Button31 As Button
-    Friend WithEvents TextBox3 As TextBox
-    Friend WithEvents Label11 As Label
-    Friend WithEvents NumericUpDown34 As NumericUpDown
-    Friend WithEvents Label12 As Label
-    Friend WithEvents NumericUpDown33 As NumericUpDown
-    Friend WithEvents Label13 As Label
-    Friend WithEvents NumericUpDown32 As NumericUpDown
-    Friend WithEvents Label14 As Label
-    Friend WithEvents NumericUpDown31 As NumericUpDown
-    Friend WithEvents Label15 As Label
-    Friend WithEvents GroupBox2 As GroupBox
-    Friend WithEvents CheckBox2 As CheckBox
-    Friend WithEvents Button21 As Button
-    Friend WithEvents TextBox2 As TextBox
-    Friend WithEvents Label6 As Label
-    Friend WithEvents NumericUpDown24 As NumericUpDown
-    Friend WithEvents Label7 As Label
-    Friend WithEvents NumericUpDown23 As NumericUpDown
-    Friend WithEvents Label8 As Label
-    Friend WithEvents NumericUpDown22 As NumericUpDown
-    Friend WithEvents Label9 As Label
-    Friend WithEvents NumericUpDown21 As NumericUpDown
-    Friend WithEvents Label10 As Label
-    Friend WithEvents GroupBox1 As GroupBox
-    Friend WithEvents CheckBox1 As CheckBox
-    Friend WithEvents Button11 As Button
-    Friend WithEvents TextBox1 As TextBox
-    Friend WithEvents Label5 As Label
-    Friend WithEvents NumericUpDown14 As NumericUpDown
-    Friend WithEvents Label3 As Label
-    Friend WithEvents NumericUpDown13 As NumericUpDown
-    Friend WithEvents Label4 As Label
-    Friend WithEvents NumericUpDown12 As NumericUpDown
-    Friend WithEvents Label2 As Label
-    Friend WithEvents NumericUpDown11 As NumericUpDown
-    Friend WithEvents Label1 As Label
     Friend WithEvents Button1 As Button
-    Friend WithEvents MasterAudioOpenFileDialog1 As OpenFileDialog
-    Friend WithEvents SaveFileDialog1 As SaveFileDialog
+    Friend WithEvents MasterAudioOpenFileDialog As OpenFileDialog
+    Friend WithEvents Mp4SaveDialog As SaveFileDialog
     Friend WithEvents VideoWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents CheckBox6 As CheckBox
     Friend WithEvents NumericUpDown1 As NumericUpDown
@@ -924,5 +584,20 @@ Partial Class Form1
     Friend WithEvents ForegroundColorDlg As ColorDialog
     Friend WithEvents Button8 As Button
     Friend WithEvents CheckBox5 As CheckBox
-    Friend WithEvents RealVersionOpenFileDialog As OpenFileDialog
+    Friend WithEvents Label21 As Label
+    Friend WithEvents NumericUpDown4 As NumericUpDown
+    Friend WithEvents CheckBox7 As CheckBox
+    Friend WithEvents Button9 As Button
+    Friend WithEvents Button10 As Button
+    Friend WithEvents OscilloscopeSettingsOpenDialog As OpenFileDialog
+    Friend WithEvents OscilloscopeSettingsSaveDialog As SaveFileDialog
+    Friend WithEvents Label23 As Label
+    Friend WithEvents MaskedTextBox2 As MaskedTextBox
+    Friend WithEvents MaskedTextBox1 As MaskedTextBox
+    Friend WithEvents Label24 As Label
+    Friend WithEvents MaskedTextBox3 As MaskedTextBox
+    Friend WithEvents Label25 As Label
+    Friend WithEvents NumericUpDown5 As NumericUpDown
+    Friend WithEvents Label26 As Label
+    Friend WithEvents Label1 As Label
 End Class
