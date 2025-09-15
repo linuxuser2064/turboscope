@@ -21,5 +21,10 @@ namespace BitmapToImageData
                 bmp.UnlockBits(data);
             }
         }
+        public static void AddBitmapFrame(MediaOutput video, BitmapData data)
+        {
+                var imgData = ImageData.FromPointer(data.Scan0, ImagePixelFormat.Argb32, new Size(data.Width, data.Height));
+                video.Video.AddFrame(imgData);
+        }
     }
 }

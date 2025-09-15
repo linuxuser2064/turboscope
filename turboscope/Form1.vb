@@ -1,8 +1,11 @@
 ﻿Imports System.ComponentModel
 Imports System.Drawing.Design
+Imports System.Drawing.Imaging
 Imports System.IO
+Imports System.Runtime.ConstrainedExecution
 Imports System.Runtime.InteropServices
 Imports System.Windows.Forms.Design
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar
 Imports System.Xml.Serialization
 Imports FFMediaToolkit
 Imports FFMediaToolkit.Encoding
@@ -91,19 +94,19 @@ Public Class Form1
         If CustomRunningTimeEnabled Then
             CustomRunningTime = NumericUpDown1.Value * SampleRate
         End If
-        Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
-        Using g As Drawing.Graphics = Drawing.Graphics.FromImage(bmp)
-            If DoAntiAliasing Then
-                g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-            Else
-                g.SmoothingMode = Drawing2D.SmoothingMode.None
-            End If
+
+        If DoAntiAliasing Then
+            Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
+            Dim g As Drawing.Graphics
+            g = Drawing.Graphics.FromImage(bmp)
+            g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            g.Clear(BackClr)
             Dim audioCounter As Long = 0
             Dim samplesPerFrame As Integer = SampleRate \ VideoFramerate
             Dim drawSampleCount As Integer = SampleRate \ 15
             Dim vid = MediaBuilder.CreateContainer($"{VideoOutputPath}_raw.mp4", ContainerFormat.MP4).
-            WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, VideoFramerate, VideoCodec.H264) With {.Bitrate = VideoBitrate, .EncoderPreset = EncoderPreset.Fast}).
-            Create
+        WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, VideoFramerate, VideoCodec.H264) With {.Bitrate = VideoBitrate, .EncoderPreset = EncoderPreset.Fast}).
+        Create
             maxprog = length
             While audioCounter < length
                 If CustomRunningTimeEnabled AndAlso audioCounter >= CustomRunningTime Then Exit While
@@ -115,19 +118,63 @@ Public Class Form1
                         Dim smp = ch.AudioData.samples
                         If audioCounter + drawSampleCount < smp.Length Then
                             Dim smpData = smp.AsSpan().Slice(CInt(audioCounter), drawSampleCount).ToArray()
-                            DrawChannel(g, ch, smpData, clr, bmp)
+                            DrawChannelGDI(g, ch, smpData, clr, bmp)
                         End If
                     End If
                 Next
-
                 BitmapToImageData.BMPtoBitmapData.AddBitmapFrame(vid, bmp)
+
+                audioCounter += samplesPerFrame
+                progress = audioCounter
+            End While
+            vid.Dispose()
+
+        Else
+
+
+            Dim bmp As New Bitmap(VideoSize.Width, VideoSize.Height)
+            Dim data As BitmapData = bmp.LockBits(New Rectangle(0, 0, bmp.Width, bmp.Height),
+                                     Imaging.ImageLockMode.ReadWrite,
+                                     Imaging.PixelFormat.Format32bppArgb)
+            Dim blankFrame(data.Stride * data.Height) As Byte
+            For i = 0 To blankFrame.Length - 1 Step 4
+                blankFrame(Clamp(i, 0, blankFrame.Length - 1)) = BackClr.A
+                blankFrame(Clamp(i + 1, 0, blankFrame.Length - 1)) = BackClr.R
+                blankFrame(Clamp(i + 2, 0, blankFrame.Length - 1)) = BackClr.G
+                blankFrame(Clamp(i + 3, 0, blankFrame.Length - 1)) = BackClr.B
+            Next
+            Marshal.Copy(blankFrame, 0, data.Scan0, blankFrame.Length - 1)
+
+
+            Dim audioCounter As Long = 0
+            Dim samplesPerFrame As Integer = SampleRate \ VideoFramerate
+            Dim drawSampleCount As Integer = SampleRate \ 15
+            Dim vid = MediaBuilder.CreateContainer($"{VideoOutputPath}_raw.mp4", ContainerFormat.MP4).
+            WithVideo(New VideoEncoderSettings(VideoSize.Width, VideoSize.Height, VideoFramerate, VideoCodec.H264) With {.Bitrate = VideoBitrate, .EncoderPreset = EncoderPreset.Fast}).
+            Create
+            maxprog = length
+            While audioCounter < length
+                If CustomRunningTimeEnabled AndAlso audioCounter >= CustomRunningTime Then Exit While
+                If audioCounter + samplesPerFrame >= length Then Exit While
+                Marshal.Copy(blankFrame, 0, data.Scan0, blankFrame.Length - 1)
+                For Each ch In Channels
+                    If ch.Enabled Then
+                        Dim smp = ch.AudioData.samples
+                        If audioCounter + drawSampleCount < smp.Length Then
+                            Dim smpData = smp.AsSpan().Slice(CInt(audioCounter), drawSampleCount).ToArray()
+                            DrawChannelFast(ch, smpData, ColorToArgbFixed(ch.LineColor), data)
+                        End If
+                    End If
+                Next
+                BitmapToImageData.BMPtoBitmapData.AddBitmapFrame(vid, data)
 
                 audioCounter += samplesPerFrame
                 progress = audioCounter
             End While
 
             vid.Dispose()
-        End Using
+        End If
+
 
         Dim ffmpegArgs = $"-i ""{VideoOutputPath}_raw.mp4"" -i ""{MasterAudio}"" -shortest -c:v copy -c:a aac -b:a 320k -map 0:v:0 -map 1:a:0 ""{Application.StartupPath}\out.mp4"""
         Dim psi As New ProcessStartInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg\x86_64\ffmpeg.exe"), ffmpegArgs) With {
@@ -154,7 +201,11 @@ Public Class Form1
             Return val
         End If
     End Function
-    Sub DrawChannel(ByRef graphic As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen, bmp As Bitmap)
+    Function ColorToArgbFixed(clr As Color) As Integer
+        Dim bytes() = {clr.A, clr.R, clr.G, clr.B}
+        Return BitConverter.ToInt32(bytes, 0)
+    End Function
+    Sub DrawChannelFast(ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineARGB As Integer, ByRef data As BitmapData)
         Dim width = channel.Width
         Dim height = channel.Height
         Dim chanX = channel.X
@@ -210,74 +261,126 @@ Public Class Form1
         Dim startIndex = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
 
         startIndex = Math.Max(0, Math.Min(startIndex, songData.Length - width - 1))
-        If DoAntiAliasing Then
-            Dim newClr As New Pen(lineColor.Color, LineWidth)
-            newClr.Width = LineWidth
-            newClr.StartCap = Drawing2D.LineCap.Round
-            newClr.EndCap = Drawing2D.LineCap.Round
-            newClr.LineJoin = Drawing2D.LineJoin.Round
-            Dim prevVal = songData(startIndex)
-            For i = startIndex To startIndex + width - 1
-                Dim val = songData(i)
-                Dim currentY = (height / 2) - (val * (height / 2)) + chanY ' calculate y of current value
-                Dim prevY = (height / 2) - (prevVal * (height / 2)) + chanY ' calculate y of previous song value
-                Dim x = i - startIndex + chanX
-                If CRTScope Then
-                    For i2 = -(LineWidth \ 2) To (LineWidth \ 2)
-                        '                                x1                     y1                          x2                          y2
-                        graphic.DrawLine(lineColor, New PointF(i - startIndex + chanX, currentY + i2), New PointF(i - startIndex + chanX - 1, prevY + 1 + i2))
-                    Next
-                Else
-                    graphic.DrawLine(newClr, New PointF(i - startIndex + chanX, currentY), New PointF(i - startIndex + chanX - 1, prevY + 1))
-                End If
-                prevVal = val
-            Next
-        Else
-            ' Lock the bitmap for writing
-            Dim data = bmp.LockBits(New Rectangle(0, 0, bmp.Width, bmp.Height),
-                            Imaging.ImageLockMode.ReadWrite,
-                            Imaging.PixelFormat.Format32bppArgb)
-            Dim pixels(bmp.Width * bmp.Height - 1) As Integer
-            Marshal.Copy(data.Scan0, pixels, 0, pixels.Length)
-            Dim prevVal = songData(startIndex)
-            For i = startIndex To startIndex + width - 1
-                Dim val = songData(i)
-                Dim currentY = (height / 2) - (val * (height / 2)) + chanY ' calculate y of current value
-                Dim roundedY As Int32 = Math.Floor(currentY)
-                Dim prevY = (height / 2) - (prevVal * (height / 2)) + chanY ' calculate y of previous song value
-                Dim roundedPrevY As Int32 = Math.Floor(prevY)
-                Dim x = i - startIndex + chanX
-                Dim y1 = CInt(Math.Floor(currentY))
-                Dim y2 = CInt(Math.Floor(prevY))
 
-                If y1 > y2 Then
-                    Dim tmp = y1
-                    y1 = y2
-                    y2 = tmp
-                End If
+        ' Lock the bitmap for writing
+        Dim pixels(data.Width * data.Height - 1) As Integer
+        Marshal.Copy(data.Scan0, pixels, 0, pixels.Length)
+        Dim prevVal = songData(startIndex)
+        For i = startIndex To startIndex + width - 1
+            Dim val = songData(i)
+            Dim currentY = (height / 2) - (val * (height / 2)) + chanY ' calculate y of current value
+            Dim roundedY As Int32 = Math.Floor(currentY)
+            Dim prevY = (height / 2) - (prevVal * (height / 2)) + chanY ' calculate y of previous song value
+            Dim roundedPrevY As Int32 = Math.Floor(prevY)
+            Dim x = i - startIndex + chanX
+            Dim y1 = CInt(Math.Floor(currentY))
+            Dim y2 = CInt(Math.Floor(prevY))
 
-                Dim verticalHalf As Integer = LineWidth \ 2
+            If y1 > y2 Then
+                Dim tmp = y1
+                y1 = y2
+                y2 = tmp
+            End If
 
-                For y = (y1 - verticalHalf) To (y2 + verticalHalf)
-                    ' Clamp y so we don't go outside the bitmap
-                    Dim clampedY = Clamp(y, 0, bmp.Height - 1)
 
-                    ' horizontal thickness
-                    Dim horizontalHalf As Integer = If(CRTScope, 0, LineWidth \ 2)
+            Dim verticalHalf As Integer = LineWidth \ 2
 
-                    For i2 = -horizontalHalf To horizontalHalf
-                        Dim px = Clamp(x + i2, 0, bmp.Width - 1)
-                        Dim index = (clampedY * data.Stride \ 4) + px
-                        pixels(index) = lineColor.Color.ToArgb
-                    Next
+            For y = (y1 - verticalHalf) To (y2 + verticalHalf)
+                ' Clamp y so we don't go outside the bitmap
+                Dim clampedY = Clamp(y, 0, data.Height - 1)
+
+                ' horizontal thickness
+                Dim horizontalHalf As Integer = If(CRTScope, 0, LineWidth \ 2)
+
+                For i2 = -horizontalHalf To horizontalHalf
+                    Dim px = Clamp(x + i2, 0, data.Width - 1)
+                    Dim index = (clampedY * data.Stride \ 4) + px
+                    pixels(index) = lineARGB
                 Next
-                prevVal = val
             Next
-            Marshal.Copy(pixels, 0, data.Scan0, pixels.Length)
-            bmp.UnlockBits(data)
-        End If
-    End Sub
+            prevVal = val
+        Next
+        Marshal.Copy(pixels, 0, data.Scan0, pixels.Length)
 
+    End Sub
+    Sub DrawChannelGDI(ByRef graphic As Drawing.Graphics, ByRef channel As OscilloscopeChannel, songData As Single(), ByVal lineColor As Pen, bmp As Bitmap)
+        Dim width = channel.Width
+        Dim height = channel.Height
+        Dim chanX = channel.X
+        Dim chanY = channel.Y
+
+        Dim peakValue As Single = Single.MinValue
+        Dim shortestDistance As Integer = Integer.MaxValue
+        Dim result As Integer = -1
+
+        Dim maxTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Max()
+        Dim minTrig As Single = songData.Skip(width \ 2).Take(songData.Length - width).Min()
+
+        Dim triggerLo As Single = Clamp(0, minTrig, maxTrig) - 0.01
+        Dim triggerHi As Single = Clamp(0, minTrig, maxTrig) + 0.01
+
+        Dim startIndexs As Integer = width \ 2
+        Dim endIndex As Integer = songData.Length - width - 1
+        Dim i As Integer = startIndexs
+
+        While i < endIndex
+            While i < endIndex AndAlso songData(i) > triggerLo
+                i += 1
+            End While
+            While i < endIndex AndAlso songData(i) <= triggerHi
+                i += 1
+            End While
+
+            Dim lastCrossing As Integer = i
+
+            While i < endIndex
+                Dim sample As Single = songData(i)
+                If sample <= 0 Then Exit While
+
+                If sample > peakValue Then
+                    peakValue = sample
+                    result = lastCrossing
+                    shortestDistance = i - lastCrossing
+                ElseIf sample = peakValue AndAlso (i - lastCrossing) < shortestDistance Then
+                    result = lastCrossing
+                    shortestDistance = i - lastCrossing
+                End If
+
+                i += 1
+            End While
+        End While
+
+        ' Fallback if nothing found
+        If result = -1 Then
+            result = songData.Length \ 2
+        End If
+
+        ' Center waveform around trigger
+        Dim startIndex = Math.Max(0, Math.Min(result - (width \ 2), songData.Length - width - 1))
+
+        startIndex = Math.Max(0, Math.Min(startIndex, songData.Length - width - 1))
+        Dim newClr As New Pen(lineColor.Color, LineWidth)
+        newClr.Width = LineWidth
+        newClr.StartCap = Drawing2D.LineCap.Round
+        newClr.EndCap = Drawing2D.LineCap.Round
+        newClr.LineJoin = Drawing2D.LineJoin.Round
+        Dim prevVal = songData(startIndex)
+        For i = startIndex To startIndex + width - 1
+            Dim val = songData(i)
+            Dim currentY = (height / 2) - (val * (height / 2)) + chanY ' calculate y of current value
+            Dim prevY = (height / 2) - (prevVal * (height / 2)) + chanY ' calculate y of previous song value
+            Dim x = i - startIndex + chanX
+            If CRTScope Then
+                For i2 = -(LineWidth \ 2) To (LineWidth \ 2)
+                    '                                x1                     y1                          x2                          y2
+                    graphic.DrawLine(lineColor, New PointF(i - startIndex + chanX, currentY + i2), New PointF(i - startIndex + chanX - 1, prevY + 1 + i2))
+                Next
+            Else
+                graphic.DrawLine(newClr, New PointF(i - startIndex + chanX, currentY), New PointF(i - startIndex + chanX - 1, prevY + 1))
+            End If
+            prevVal = val
+        Next
+    End Sub
     ' this is completely fucked
     Public Sub QuickDrawLine(pen As Pen, x1 As Int32, y1 As Int32, x2 As Int32, y2 As Int32, ByRef fp As FastPix)
         ' this will only draw vertical lines (x1 and x2 will be assumed to be the same)
@@ -492,7 +595,7 @@ Public Class Form1
                         Next
                     End If
                     Dim clr As New Pen(Channels(i).LineColor)
-                    DrawChannel(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, clr, bufBMP)
+                    DrawChannelGDI(g, Channels(i), Channels(i).AudioData.samples.Skip(SampleRate).Take(SampleRate \ 10).ToArray, clr, bufBMP)
                     Channels(i).AudioData = Nothing
                 End If
             Next
