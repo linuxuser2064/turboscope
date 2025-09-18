@@ -2,15 +2,12 @@
 Imports System.Drawing.Design
 Imports System.Drawing.Imaging
 Imports System.IO
-Imports System.Runtime.ConstrainedExecution
 Imports System.Runtime.InteropServices
 Imports System.Windows.Forms.Design
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar
 Imports System.Xml.Serialization
 Imports FFMediaToolkit
 Imports FFMediaToolkit.Encoding
 Imports NAudio.Wave
-Imports NAudio.Wave.SampleProviders
 Public Class Form1
     Public Channels As New List(Of OscilloscopeChannel)
     Dim ChannelCount As Int32 = 3
@@ -263,7 +260,7 @@ Public Class Form1
         startIndex = Math.Max(0, Math.Min(startIndex, songData.Length - width - 1))
 
         ' Lock the bitmap for writing
-        Dim pixels(data.Width * data.Height - 1) As Integer
+        Dim pixels((data.Stride \ 4) * data.Height - 1) As Integer
         Marshal.Copy(data.Scan0, pixels, 0, pixels.Length)
         Dim prevVal = songData(startIndex)
         For i = startIndex To startIndex + width - 1
