@@ -378,24 +378,6 @@ Public Class Form1
             prevVal = val
         Next
     End Sub
-    ' this is completely fucked
-    Public Sub QuickDrawLine(pen As Pen, x1 As Int32, y1 As Int32, x2 As Int32, y2 As Int32, ByRef fp As FastPix)
-        ' this will only draw vertical lines (x1 and x2 will be assumed to be the same)
-        Dim clr As Color = pen.Color
-        If y1 < y2 Then
-            For i = y1 To y2
-                fp.SetPixel(x1, i, clr)
-            Next
-        End If
-        If y2 < y1 Then
-            For i = y2 To y1
-                fp.SetPixel(x1, i, clr)
-            Next
-        End If
-        If y1 = y2 Then
-            fp.SetPixel(x1, y1, clr)
-        End If
-    End Sub
     Private Sub SaveSets()
         MasterAudio = TextBox4.Text
         CustomRunningTimeEnabled = CheckBox6.Checked
@@ -610,6 +592,9 @@ Public Class Form1
 
     Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
         If OscilloscopeSettingsSaveDialog.ShowDialog = DialogResult.OK Then
+            For i = 0 To Channels.Count - 1
+                Channels(i).AudioData = Nothing
+            Next
             Dim sets As New OscilloscopeSettings
             sets.Channels = Me.Channels
             sets.ChannelColor = New List(Of (r As Integer, g As Integer, b As Integer))
